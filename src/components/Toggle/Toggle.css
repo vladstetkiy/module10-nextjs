@@ -1,0 +1,80 @@
+.toggle {
+  display: flex;
+  align-items: center;
+
+  .first-option {
+    margin-right: 12px;
+  }
+
+  .second-option {
+    margin-left: 12px;
+  }
+
+  .toggle-container {
+    width: 48px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    background-color: var(--component-fill-dark-soft);
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    padding: 2px;
+  }
+
+  .toggle-off {
+    .toggle-handle {
+      background-color: var(--component-fill-light-fixed);
+    }
+  }
+
+  .toggle-on {
+    .toggle-handle {
+      background-color: var(--component-fill-positive);
+    }
+  }
+
+  .toggle-handle {
+    width: 20px;
+    height: 20px;
+    background-color: var(--component-fill-light-fixed);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .toggle-on .toggle-handle {
+    transform: translateX(20px);
+  }
+
+  .toggle-off .toggle-handle {
+    transform: translateX(2px);
+  }
+}
+
+.segment-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--component-fill-dark-soft);
+  width: 211px;
+  height: 40px;
+
+  .first-option,
+  .second-option {
+    width: 96px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .segment-control {
+    display: flex;
+    align-items: center;
+    background-color: var(--component-fill-dark-soft);
+    position: relative;
+  }
+
+  .toggle-on {
+    background-color: var(--component-fill-positive);
+  }
+}

@@ -1,0 +1,7 @@
+.mail-icon {
+  fill: var(--component-text-dark);
+
+  path {
+    fill: var(--component-text-dark);
+  }
+}

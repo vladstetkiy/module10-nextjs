@@ -1,0 +1,6 @@
+.orange-button {
+  background-color: var(--component-fill-positive);
+  text-align: center;
+  line-height: normal;
+  height: 44px;
+}

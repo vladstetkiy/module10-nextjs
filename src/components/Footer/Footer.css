@@ -1,0 +1,20 @@
+footer.footer {
+  background-color: var(--background-fill-surface);
+  color: var(--component-fill-positive);
+  padding: 22px;
+  text-align: center;
+  display: flex;
+  height: 68px;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    height: 58px;
+  }
+}

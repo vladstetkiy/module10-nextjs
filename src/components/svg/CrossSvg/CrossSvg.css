@@ -1,0 +1,3 @@
+:where(.cross-small-icon) {
+  fill: var(--component-text-dark);
+}

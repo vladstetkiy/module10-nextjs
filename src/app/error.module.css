@@ -1,0 +1,35 @@
+.crossSvg {
+  width: 180px;
+  height: 180px;
+}
+
+#errorPage .pText {
+  text-align: center;
+  font-size: 70px;
+  margin-top: 47px;
+}
+
+#errorPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+  #errorPage .pText {
+    font-size: 18px;
+    margin-top: 0px;
+  }
+
+  .crossSvg {
+    width: 80px;
+    height: 80px;
+  }
+}

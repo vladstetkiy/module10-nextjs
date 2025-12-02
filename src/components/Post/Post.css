@@ -1,0 +1,34 @@
+.post {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: var(--background-fill-surface);
+  width: 100%;
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+}
+
+.post-avatar {
+  max-height: 48px;
+}
+
+@media (max-width: 1000px) {
+  aside {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .post {
+    background-color: var(--background-fill-middle);
+    padding: 12px;
+    border-left: 0;
+    border-right: 0;
+
+    .post-img {
+      max-height: 150px;
+      object-fit: cover;
+    }
+  }
+}

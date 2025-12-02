@@ -1,0 +1,3 @@
+.pen-svg path {
+  fill: var(--component-text-dark);
+}

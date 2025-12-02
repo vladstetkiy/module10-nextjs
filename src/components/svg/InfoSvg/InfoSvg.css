@@ -1,0 +1,5 @@
+.info-svg-component {
+  width: 20px;
+  height: 20px;
+  fill: var(--component-text-gray);
+}

@@ -1,0 +1,25 @@
+:root {
+  --background-fill-surface: #0e1223;
+  --background-fill-middle: #1b2037;
+  --component-fill-dark-soft: #0e1223;
+  --component-fill-positive: #ff8811;
+  --component-stroke-dark-soft: #384162;
+  --component-fill-light: #151a2d;
+  --component-fill-light-fixed: #ffffff;
+  --component-text-dark: #ffffff;
+  --component-text-gray: #8791b7;
+  --logo-text: #ffffff;
+
+  transition: all 0.3s ease-in-out;
+}
+
+.light-theme {
+  --background-fill-surface: #fafafa;
+  --background-fill-middle: #ffffff;
+  --component-fill-positive: #ff8811;
+  --component-stroke-dark-soft: #e0e2e7;
+  --component-fill-light: #ffffff;
+  --component-fill-dark-soft: #f0f1f3;
+  --component-text-dark: #000000;
+  --logo-text: #151a2d;
+}

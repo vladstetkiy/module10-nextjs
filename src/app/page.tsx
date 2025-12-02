@@ -1,66 +1,69 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import CreatePost from '@/components/CreatePost/CreatePost';
+import Post from '@/components/Post/Post';
+import ListCard from '@/components/ListCard/ListCard';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  type PostInterface,
+  type GroupInterface,
+  type UserInterface,
+  validatePost,
+} from '@/types/post.types';
+import styles from './page.module.css';
+import libApi from '@/utils/libApi';
+
+export default function HomePage() {
+  const [posts, setPosts] = useState<PostInterface[]>([]);
+  const [suggestedPeople, setSuggestedPeople] = useState<UserInterface[]>([]);
+  const [interestingGroups, setInterestingGroups] = useState<GroupInterface[]>([]);
+
+  const { isAuth } = useAuth();
+
+  useEffect(() => {
+    libApi
+      .get('/posts')
+      .then((data) => {
+        const validatedData = data.map((item: PostInterface) => validatePost(item));
+        setPosts(validatedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching posts:', error);
+      });
+
+    if (isAuth) {
+      libApi
+        .get('/getSuggested')
+        .then((data) => {
+          setSuggestedPeople(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching suggested people:', error);
+        });
+      libApi
+        .get('/groups')
+        .then((data) => {
+          setInterestingGroups(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching groups:', error);
+        });
+    }
+  }, []);
+
   return (
-    <div className={styles.page}>
+    <div className={styles.homePage}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        {isAuth && <CreatePost />}
+        {posts.length >= 1 && posts.map((item) => <Post key={item.id} {...item} />)}
       </main>
+      {isAuth && (
+        <aside className={styles.aside}>
+          <ListCard title="Suggested people" items={suggestedPeople} />
+          <ListCard title="communities you might like" items={interestingGroups} isGroups={true} />
+        </aside>
+      )}
     </div>
   );
 }

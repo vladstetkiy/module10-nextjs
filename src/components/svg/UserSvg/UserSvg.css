@@ -1,0 +1,7 @@
+.user-svg {
+  fill: var(--component-text-dark);
+
+  path {
+    fill: var(--component-text-dark);
+  }
+}

@@ -1,0 +1,38 @@
+.input-wrapper {
+  display: flex;
+}
+
+.input-wrapper label {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-base {
+  background-color: var(--component-fill-light);
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+  padding: 16px;
+}
+
+.additional-info-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.additional-info-svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--component-text-gray);
+}
+
+.additional-info-text {
+  color: var(--component-text-gray);
+}
