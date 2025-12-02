@@ -58,7 +58,6 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
         logIn(values.email, values.password)
           .unwrap()
           .then((result) => {
-            console.log(result);
             if (result) {
               showNotification('User has been signed in successfully', 5000);
               router.push('/');
