@@ -8,6 +8,7 @@ import { useState, useRef } from 'react';
 import Button from '../Button/Button';
 import { showNotification } from '../../utils/ShowNotification';
 import libApi from '@/utils/libApi';
+import { useTranslation } from 'react-i18next';
 
 interface CreatePostFormInterface {
   closeFunc: () => void;
@@ -20,6 +21,7 @@ interface ErrorsInterface {
 }
 
 function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
+  const { t } = useTranslation();
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -65,36 +67,36 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     let isValid = true;
 
     if (!newTitle.trim()) {
-      newErrors.title = 'Post title is required';
+      newErrors.title = t('inputPostTitle');
       isValid = false;
     } else if (newTitle.length < 3) {
-      newErrors.title = 'Title must be at least 3 characters long';
+      newErrors.title = t('inputPostTitle');
       isValid = false;
     } else if (newTitle.length > 100) {
-      newErrors.title = 'Title cannot exceed 100 characters';
+      newErrors.title = t('maxTitleLength');
       isValid = false;
     }
 
     if (!newDescription.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = t('inputPostDesc');
       isValid = false;
     } else if (newDescription.length < 10) {
-      newErrors.description = 'Description must be at least 10 characters long';
+      newErrors.description = t('inputPostDesc');
       isValid = false;
     } else if (newDescription.length > 500) {
-      newErrors.description = 'Description cannot exceed 500 characters';
+      newErrors.description = t('descSize');
       isValid = false;
     }
 
     if (selectedFile) {
       if (selectedFile.size > 10 * 1024 * 1024) {
-        newErrors.file = 'File size must be less than 10MB';
+        newErrors.file = t('fileSizeExceeded');
         isValid = false;
       }
 
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
       if (!allowedTypes.includes(selectedFile.type)) {
-        newErrors.file = 'Only JPG, PNG or PDF files are allowed';
+        newErrors.file = t('invalidFileType');
         isValid = false;
       }
     }
@@ -136,7 +138,7 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     const validateResult = validateForm();
 
     if (validateResult) {
-      showNotification('Post has been created successfully', 5000);
+      showNotification(t('postCreated'), 5000);
 
       libApi.post('/posts', {
         title: newTitle,
@@ -153,7 +155,7 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     <>
       <section className="create-post-container">
         <div className="create-post-form-header">
-          <h2 className="create-post-form-title">Create a new post</h2>
+          <h2 className="create-post-form-title">{t('createNewPost')}</h2>
           <button onClick={closeFunc}>
             <CrossSvg className="create-post-form-cross" />
           </button>
@@ -161,21 +163,21 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
         <form className="create-post-form" onSubmit={handleSubmit}>
           <Input
             inputClassName="username-input"
-            placeholder="Enter post title"
+            placeholder={t('postTitlePlaceholder')}
             value={newTitle}
             onChange={handleTitleInputChange}
             svgIconComponent={<MailSvg />}
-            title="Post Title"
+            title={t('postTitle')}
           />
           {errors.title ? <p className="create-post-error-message">{errors.title}</p> : null}
 
           <Input
             inputClassName="description-input-form"
-            placeholder="Write description here..."
+            placeholder={t('descriptionPlaceholder')}
             value={newDescription}
             onChange={handleDescriptionInputChange}
             svgIconComponent={<PenSvg />}
-            title="Description"
+            title={t('description')}
           />
           {errors.description ? (
             <p className="create-post-error-message">{errors.description}</p>
@@ -189,8 +191,8 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
           >
             <UploadFileSvg className="upload-file-create-post-svg" />
             <div className="info-wrapper">
-              <p>Select a file or drag and drop here</p>
-              <p className="additional-info">JPG, PNG or PDF, file size no more than 10MB</p>
+              <p>{t('uploadFile')}</p>
+              <p className="additional-info">{t('fileTypes')}</p>
             </div>
 
             <input
@@ -203,7 +205,7 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
           </div>
           {errors.file ? <p className="create-post-error-message">{errors.file}</p> : null}
 
-          <Button text="Create" className="create-post-form-button" type="submit" />
+          <Button text={t('create')} className="create-post-form-button" type="submit" />
         </form>
       </section>
       <div className="create-post-overlay"></div>

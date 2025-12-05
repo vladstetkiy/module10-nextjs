@@ -11,6 +11,7 @@ import {
   Bar,
 } from 'recharts';
 import { type LikeInterface, type CommentInterface } from '../../types/post.types';
+import { useTranslation } from 'react-i18next';
 
 type tableChardMode = 'table' | 'lineChart' | 'barChart';
 
@@ -27,8 +28,10 @@ interface TableDataInterface {
 }
 
 function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterface) {
+  const { t, i18n } = useTranslation();
+
   const formatDate = (dateString: string): string => {
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -86,34 +89,40 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
   return (
     <div className="table-chart-wrapper">
       <div className="table-container">
-        <h3 className="table-title">Title</h3>
+        <h3 className="table-title">
+          {mode === 'lineChart'
+            ? t('likesCountStats')
+            : mode === 'barChart'
+              ? t('commentsCountStats')
+              : t('likesStat')}
+        </h3>
 
         {mode == 'table' ? (
           <>
             <div className="table-header">
-              <div className="header-cell">Data</div>
-              <div className="header-cell second-column-header">Count</div>
+              <div className="header-cell">{t('month')}</div>
+              <div className="header-cell second-column-header">{t('commentsCountStats')}</div>
               <div className="header-cell">№</div>
             </div>
 
             <div className="table-body">
               {likes
                 ? tableDataLikes.map((item, index) => (
-                    <div key={index} className="table-row">
-                      <div className="data-ceil">{item.row}</div>
-                      <div className="data-cell second-column">{item.col2}</div>
-                      <div className="data-cell">{item.col3}</div>
-                    </div>
-                  ))
+                  <div key={index} className="table-row">
+                    <div className="data-ceil">{item.row}</div>
+                    <div className="data-cell second-column">{item.col2}</div>
+                    <div className="data-cell">{item.col3}</div>
+                  </div>
+                ))
                 : null}
               {comments
                 ? tableDataComments.map((item, index) => (
-                    <div key={index} className="table-row">
-                      <div className="data-ceil">{item.row}</div>
-                      <div className="data-cell second-column">{item.col2}</div>
-                      <div className="data-cell">{item.col3}</div>
-                    </div>
-                  ))
+                  <div key={index} className="table-row">
+                    <div className="data-ceil">{item.row}</div>
+                    <div className="data-cell second-column">{item.col2}</div>
+                    <div className="data-cell">{item.col3}</div>
+                  </div>
+                ))
                 : null}
             </div>
           </>
@@ -160,7 +169,7 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
                       fontSize: '14px',
                     }}
                     itemStyle={{ color: 'var(--component-text-gray)' }}
-                    formatter={(value: number) => [value, 'Likes']}
+                    formatter={(value: number) => [value, t('likesStat')]}
                     labelStyle={{ fontWeight: '600', color: 'var(--component-text-gray)' }}
                   />
                   <Line
@@ -217,7 +226,7 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
                       fontSize: '14px',
                     }}
                     itemStyle={{ color: 'var(--component-text-gray)' }}
-                    formatter={(value: number) => [value, 'Comments']}
+                    formatter={(value: number) => [value, t('commentsStat')]}
                     labelStyle={{ fontWeight: '600', color: 'var(--component-text-gray)' }}
                   />
                   <Bar

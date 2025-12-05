@@ -4,8 +4,10 @@ import Button from '../Button/Button';
 import CreatePostForm from '../CreatePostForm/CreatePostForm';
 import { type UserInterface, validateUser } from '../../types/post.types';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function CreatePost() {
+  const { t } = useTranslation();
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   let currentUser: UserInterface = {
     id: 0,
@@ -26,9 +28,9 @@ function CreatePost() {
     <>
       <section className="create-post">
         <Avatar avatarSrc={currentUser.profileImage} className="create-post-avatar" />
-        <p>What’s happening?</p>
+        <p>{t('whatsHappening')}</p>
         <Button
-          text="Tell everyone"
+          text={t('tellEveryone')}
           className="create-post-button"
           onClick={() => {
             setIsCreatePostOpen((prev) => !prev);

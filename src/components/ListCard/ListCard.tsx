@@ -9,8 +9,8 @@ interface PropsInterface {
 
 function ListCard({ title, items, isGroups }: PropsInterface) {
   if (!Array.isArray(items)) {
-    console.warn('Items is not an array:', items);
-    return <div>No items to display</div>;
+    console.error('Items is not an array:', items);
+    return null;
   }
   return (
     <div className="list-container">

@@ -10,6 +10,7 @@ interface TogglePropsInterface {
   visualMode: visualModes;
   firstOption?: string;
   secondOption?: string;
+  className?: string;
 }
 
 const MaterialSwitch = styled(Switch)(({ theme }) => ({
@@ -53,7 +54,14 @@ const MaterialSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-function Toggle({ isOn, onToggle, visualMode, firstOption, secondOption }: TogglePropsInterface) {
+function Toggle({
+  isOn,
+  onToggle,
+  visualMode,
+  firstOption,
+  secondOption,
+  className,
+}: TogglePropsInterface) {
   const [isOnState, setIsOnState] = useState(isOn);
 
   const handleClick = () => {
@@ -84,7 +92,7 @@ function Toggle({ isOn, onToggle, visualMode, firstOption, secondOption }: Toggl
         </Typography>
       )}
 
-      <MaterialSwitch checked={isOnState} onChange={handleClick} />
+      <MaterialSwitch checked={isOnState} onChange={handleClick} className={className} />
 
       {secondOption && (
         <Typography variant="body2" className="second-option" sx={{ ml: '12px' }}>

@@ -1,6 +1,6 @@
 import './Post.css';
-import PersonShortInfo from '../PersonShortInfo/PersonShortInfo.tsx';
-import PostReactions from '../PostReactions/PostReactions.tsx';
+import PersonShortInfo from '../PersonShortInfo/PersonShortInfo';
+import PostReactions from '../PostReactions/PostReactions';
 import type { PostInterface } from '../../types/post.types.ts';
 
 function Post({ id, content, image, authorId }: PostInterface) {

@@ -10,8 +10,22 @@
   padding-bottom: 36px;
   gap: 32px;
   max-width: 372px;
-  min-width: 250px;
+  min-width: 270px;
   width: 100%;
+}
+
+.list-container-skeleton .list-container-title {
+  margin-bottom: -12px;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .list-container-skeleton {
+    padding: 16px;
+    gap: 16px;
+  }
 }
 
 .list-container-title {

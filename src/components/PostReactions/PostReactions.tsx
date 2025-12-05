@@ -8,12 +8,14 @@ import PenSvg from '../svg/PenSvg/PenSvg';
 import Input from '../Input/Input';
 import { type CommentInterface, validateComment } from '../../types/post.types';
 import libApi from '@/utils/libApi';
+import { useTranslation } from 'react-i18next';
 
 interface PostReactionsPropsInterface {
   postId: number;
 }
 
 function PostReactions({ postId }: PostReactionsPropsInterface) {
+  const { t } = useTranslation();
   const [likes, setLikes] = useState(21);
   const [comments, setComments] = useState<CommentInterface[] | undefined>(undefined);
   const [newComment, setNewComment] = useState('');
@@ -83,7 +85,9 @@ function PostReactions({ postId }: PostReactionsPropsInterface) {
             <LikeSvg />
           </button>
 
-          <p>{likes} likes</p>
+          <p>
+            {likes} {t('likesPlural2')}
+          </p>
         </div>
         <div className="comments-count">
           <button>
@@ -91,7 +95,9 @@ function PostReactions({ postId }: PostReactionsPropsInterface) {
           </button>
           {isAuth ? (
             <>
-              <p>{comments?.length} comments</p>
+              <p>
+                {comments?.length || 0} {t('commentsPlural2')}
+              </p>
               <button
                 onClick={toggleCommentsVisibility}
                 className={isCommentsVisible ? 'comment-svg-visible' : 'comment-svg-invisible'}
@@ -100,7 +106,7 @@ function PostReactions({ postId }: PostReactionsPropsInterface) {
               </button>
             </>
           ) : (
-            <p>You have to login to see the comments</p>
+            <p>{t('loginToSeeComments')}</p>
           )}
         </div>
       </div>
@@ -108,20 +114,28 @@ function PostReactions({ postId }: PostReactionsPropsInterface) {
         <>
           {' '}
           <div className="comments">
-            {comments?.map((comment, index) => (
-              <p key={index}>{`#${index + 1}. ` + comment.text}</p>
-            ))}
+            {comments ? (
+              comments.map((comment, index) => (
+                <p key={index}>{`#${index + 1}. ` + comment.text}</p>
+              ))
+            ) : (
+              <p>{t('loadingComments')}</p>
+            )}
           </div>
           <Input
             wrapperClassName="comment-input-wrapper"
             inputClassName="comment-input"
-            placeholder="Write description here"
+            placeholder={t('commentPlaceholder')}
             value={newComment}
             onChange={handleICommentInputChange}
             svgIconComponent={<PenSvg />}
-            title="Add a comment"
+            title={t('addComment')}
           />
-          <Button text="Add a comment" onClick={handleAddComment} className="add-comment-button" />
+          <Button
+            text={t('addComment')}
+            onClick={handleAddComment}
+            className="add-comment-button"
+          />
         </>
       ) : null}
     </>

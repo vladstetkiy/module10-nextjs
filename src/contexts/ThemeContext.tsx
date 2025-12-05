@@ -1,9 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-
 import { persist } from 'zustand/middleware';
-
 import { useEffect } from 'react';
 
 interface ThemeStore {
@@ -29,9 +27,9 @@ export const useTheme = () => {
 
   useEffect(() => {
     if (isDarkMode) {
-      document.body.classList.remove('light-theme');
+      document.querySelector('.theme-wrapper')?.classList.remove('light-theme');
     } else {
-      document.body.classList.add('light-theme');
+      document.querySelector('.theme-wrapper')?.classList.add('light-theme');
     }
   }, [isDarkMode]);
 

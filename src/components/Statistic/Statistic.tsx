@@ -12,8 +12,10 @@ import {
   validatePost,
 } from '../../types/post.types';
 import libApi from '@/utils/libApi';
+import { useTranslation } from 'react-i18next';
 
 function Statistic() {
+  const { t } = useTranslation();
   const [isTableView, setIsTableView] = useState<boolean>(true);
   const [comments, setComments] = useState<CommentInterface[] | undefined>(undefined);
   const [likes, setLikes] = useState<LikeInterface[] | undefined>(undefined);
@@ -61,25 +63,26 @@ function Statistic() {
   function onTableViewToggle() {
     setIsTableView((prev) => !prev);
   }
+
   return (
     <div className="statistic">
       <div className="metric-cards">
         <MetricCard
-          cardTitle="Comments"
+          cardTitle={t('commentsStat')}
           cardValue={comments?.length}
-          valueComment="+20% month over month"
+          valueComment={t('percentStats')}
           className="statistic-metric-card"
         />
         <MetricCard
-          cardTitle="Likes"
+          cardTitle={t('likesStat')}
           cardValue={likes?.length}
-          valueComment="+33% month over month"
+          valueComment={t('percentStats')}
           className="statistic-metric-card"
         />
         <MetricCard
           cardTitle="Posts"
           cardValue={posts?.length}
-          valueComment="-8% month over month"
+          valueComment={t('percentStats')}
           className="statistic-metric-card"
         />
       </div>
@@ -87,17 +90,17 @@ function Statistic() {
       <Toggle
         visualMode="toggle"
         isOn={false}
-        firstOption={isTableView ? '' : 'Table view'}
-        secondOption={isTableView ? 'Enable chart view' : 'Chart view'}
+        firstOption={isTableView ? '' : t('tableView')}
+        secondOption={isTableView ? t('chartView') : t('chartView')}
         onToggle={onTableViewToggle}
       />
       <div className="table-charts-container">
         <div className="table-chart-wrapper">
-          <p>Likes</p>
+          <p>{t('likesStat')}</p>
           <TableChart mode={isTableView ? 'table' : 'lineChart'} likes={likes} />
         </div>
         <div className="table-chart-wrapper">
-          <p>Comments</p>
+          <p>{t('commentsStat')}</p>
           <TableChart mode={isTableView ? 'table' : 'barChart'} comments={comments} />
         </div>
       </div>

@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { showNotification } from '@/utils/ShowNotification';
+import { useTranslation } from 'react-i18next';
 
 type mode = 'signin' | 'signup';
 
@@ -26,6 +27,7 @@ interface FormValues {
 function AuthPage({ mode }: AuthPagePropsInterface) {
   const { logIn, logUp } = useAuth();
   const [logInResult, setLogInResult] = useState(false);
+  const { t } = useTranslation();
   const router = useRouter();
 
   const formik = useFormik<FormValues>({
@@ -37,18 +39,18 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
       const errors: Partial<FormValues> = {};
 
       if (!values.email.trim()) {
-        errors.email = 'Email is required';
+        errors.email = t('inputEmail');
       } else {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(values.email)) {
-          errors.email = 'Please enter a valid email address';
+          errors.email = t('invalidEmail');
         }
       }
 
       if (!values.password.trim()) {
-        errors.password = 'Password is required';
+        errors.password = t('inputPassword');
       } else if (values.password.length < 6) {
-        errors.password = 'Password must be at least 6 characters long';
+        errors.password = t('passwordTooShort');
       }
 
       return errors;
@@ -59,7 +61,7 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
           .unwrap()
           .then((result) => {
             if (result) {
-              showNotification('User has been signed in successfully', 5000);
+              showNotification(t('signInSuccess'), 5000);
               router.push('/');
             } else {
               setLogInResult(true);
@@ -70,7 +72,7 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
           .unwrap()
           .then((result) => {
             if (result === 'ok') {
-              showNotification('User has been signed up successfully', 5000);
+              showNotification(t('signUpSuccess'), 5000);
               router.push('/');
             }
           });
@@ -111,18 +113,22 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
   };
 
   return (
-    <main className="auth-page">
-      <form className="auth-form" onSubmit={handleSubmit}>
+    <main className="auth-page" data-testid="auth-page">
+      <form className="auth-form" onSubmit={handleSubmit} data-testid="auth-form">
         <div className="form-title">
           {mode == 'signin' ? (
             <>
-              <h2>Sign in into an account</h2>{' '}
-              <p>Enter your email and password to sign in into this app</p>
+              <h2 data-testid="page-title">{t('signIn')}</h2>
+              <p data-testid="page-description">
+                {t('enterEmailPassword') + ' ' + t('toSignIn') + ' ' + t('thisApp')}
+              </p>
             </>
           ) : (
             <>
-              <h2>Create an account</h2>
-              <p>Enter your email and password to sign up for this app</p>
+              <h2 data-testid="page-title">{t('createAccount')}</h2>
+              <p data-testid="page-description">
+                {t('enterEmailPassword') + ' ' + t('toSignUp') + ' ' + t('thisApp')}
+              </p>
             </>
           )}
         </div>
@@ -131,15 +137,18 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
           <Input
             wrapperClassName="email-input-wrapper"
             inputClassName="email-input"
-            placeholder="Enter email"
+            placeholder={t('emailPlaceholder')}
             value={formik.values.email}
             onChange={handleEmailInputChange}
             onBlur={() => handleBlur('email')}
             svgIconComponent={<MailSvg />}
-            title="Email"
+            title={t('email')}
+            dataTestId="email-input"
           />
           {formik.touched.email && formik.errors.email && (
-            <div className="auth-error-message">{formik.errors.email}</div>
+            <div className="auth-error-message" data-testid="email-error">
+              {formik.errors.email}
+            </div>
           )}
         </div>
 
@@ -147,51 +156,69 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
           <Input
             wrapperClassName="password-input-wrapper"
             inputClassName="password-input"
-            placeholder="Enter password"
+            placeholder={t('passwordPlaceholder')}
             value={formik.values.password}
             onChange={handlePasswordInputChange}
             onBlur={() => handleBlur('password')}
             svgIconComponent={<EyeSvg />}
-            title="Password"
+            title={t('password')}
+            dataTestId="password-input"
           />
           {formik.touched.password && formik.errors.password && (
-            <div className="auth-error-message">{formik.errors.password}</div>
+            <div className="auth-error-message" data-testid="password-error">
+              {formik.errors.password}
+            </div>
           )}
         </div>
+
         {logInResult ? (
-          <div className="auth-error-message user-error">User does not exist</div>
+          <div className="auth-error-message user-error" data-testid="credentials-error">
+            {t('invalidCredentials')}
+          </div>
         ) : null}
+
         <Button
-          text={mode == 'signin' ? 'sign in' : 'sign up'}
+          text={mode == 'signin' ? t('signIn') : t('signUp')}
           className="submit-auth-button"
           type="submit"
+          data-testid="submit-button"
         />
 
         {mode == 'signin' ? (
           <>
-            <p>
-              Forgot to create an account?{' '}
-              <Link href="/signup" className="nav-link" onClick={resetForm}>
-                Sign up
+            <p data-testid="switch-to-signup-text">
+              {t('dontHaveAccount')}{' '}
+              <Link
+                href="/signup"
+                className="nav-link"
+                onClick={resetForm}
+                data-testid="switch-to-signup-link"
+              >
+                {t('signUpLink')}
               </Link>
             </p>
           </>
         ) : (
           <>
-            <p className="agreement-text">
-              By clicking continue, you agree to our{' '}
+            <p className="agreement-text" data-testid="agreement-text">
+              {t('termsAgreement')}{' '}
               <span className="links">
-                Terms of Service
+                {t('termsOfService')}
                 <br />
               </span>{' '}
-              and <span className="links">Privacy Policy</span>
+              {t('and')} <span className="links">{t('privacyPolicy')}</span>
             </p>
 
-            <p>
-              Already have an account?{' '}
-              <Link href="/signin" className="nav-link" onClick={resetForm}>
-                Sign in
-              </Link>{' '}
+            <p data-testid="switch-to-signin-text">
+              {t('alreadyHaveAccount')}{' '}
+              <Link
+                href="/signin"
+                className="nav-link"
+                onClick={resetForm}
+                data-testid="switch-to-signin-link"
+              >
+                {t('signInLink')}
+              </Link>
             </p>
           </>
         )}

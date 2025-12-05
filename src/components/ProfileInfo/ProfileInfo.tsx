@@ -13,6 +13,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
 import { showNotification } from '../../utils/ShowNotification';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorsInterface {
   email: string;
@@ -23,6 +24,7 @@ interface ErrorsInterface {
 function ProfileInfo() {
   const { themeToggle } = useTheme();
   const { logOut } = useAuth();
+  const { i18n, t } = useTranslation();
   const [newUsername, setNewUsername] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -31,6 +33,12 @@ function ProfileInfo() {
     username: '',
     description: '',
   });
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(newLang);
+  };
+
   const handleUsernameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     validateForm();
     setNewUsername(event.target.value);
@@ -65,26 +73,26 @@ function ProfileInfo() {
     let isValid = true;
 
     if (!newUsername.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = t('inputUsername');
       isValid = false;
     } else if (newUsername.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters long';
+      newErrors.username = t('inputUsername');
       isValid = false;
     } else if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
-      newErrors.username = 'Username can only contain letters, numbers and underscore';
+      newErrors.username = t('inputUsername');
       isValid = false;
     }
 
     if (!newEmail.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('inputEmail');
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = t('inputValidEmail');
       isValid = false;
     }
 
     if (newDescription.length > 200) {
-      newErrors.description = 'Description cannot exceed 200 characters';
+      newErrors.description = t('descSize');
       isValid = false;
     }
     setErrors(newErrors);
@@ -96,7 +104,7 @@ function ProfileInfo() {
     const validateResult = validateForm();
 
     if (validateResult) {
-      showNotification('Profile info has been updated successfully', 5000);
+      showNotification(t('updatedProfile'), 5000);
 
       const token = localStorage.getItem('authToken');
       const mutation = `
@@ -131,10 +139,11 @@ function ProfileInfo() {
       clearForm();
     }
   };
+
   return (
     <main className="profile-info">
       <form className="edit-profile">
-        <h2>Edit-profile</h2>
+        <h2>{t('editProfile')}</h2>
         <PersonShortInfo avatarClassName="profile-avatar" isMe={true} />
         <Input
           inputClassName="username-input"
@@ -142,7 +151,7 @@ function ProfileInfo() {
           value={newUsername}
           onChange={handleUsernameInputChange}
           svgIconComponent={<UserSvg />}
-          title="Username"
+          title={t('username')}
         />
         {errors.username ? <p className="error-message">{errors.username}</p> : null}
         <Input
@@ -151,21 +160,21 @@ function ProfileInfo() {
           value={newEmail}
           onChange={handleEmailInputChange}
           svgIconComponent={<MailSvg />}
-          title="Email"
+          title={t('email')}
         />
         {errors.email ? <p className="error-message">{errors.email}</p> : null}
         <Input
           inputClassName="description-input"
-          placeholder="Write description here"
+          placeholder={t('descriptionPlaceholder')}
           value={newDescription}
           onChange={handleDescriptionInputChange}
           svgIconComponent={<PenSvg />}
-          title="Description"
-          additionalInfo="Max 200 chars"
+          title={t('description')}
+          additionalInfo={t('maxDescLength')}
         />
         {errors.description ? <p className="error-message">{errors.description}</p> : null}
         <Button
-          text="Save Profile Changes"
+          text={t('saveProfile')}
           className="save-changes-button"
           type="submit"
           onClick={handleSubmit}
@@ -173,18 +182,24 @@ function ProfileInfo() {
       </form>
       <div className="second-column-wrapper">
         <section className="Preferences">
-          <h2>Preferences</h2>
+          <h2>{t('preferencies')}</h2>
           <Toggle
             visualMode="toggle"
             onToggle={themeToggle}
             isOn={true}
-            secondOption="Dark theme"
+            secondOption={t('darkTheme')}
+          />
+          <Toggle
+            visualMode="toggle"
+            onToggle={toggleLanguage}
+            isOn={i18n.language !== 'en'}
+            secondOption={i18n.language === 'en' ? 'RU' : 'EN'}
           />
         </section>
         <section className="Actions">
-          <h2>Actions</h2>
+          <h2>{t('actions')}</h2>
           <Link href="/" className="logout-link-button">
-            <Button text="Logout" onClick={logOut} className="logout-button" />
+            <Button text={t('logout')} onClick={logOut} className="logout-button" />
           </Link>
         </section>
       </div>

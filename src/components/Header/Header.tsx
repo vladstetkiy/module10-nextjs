@@ -6,13 +6,15 @@ import LogoSvg from '@/components/svg/LogoSvg/LogoSvg';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 function Header() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const allowedPathsForNav = ['/', '/profile-info-and-statistic'];
-
-  const isAuth = localStorage.getItem('isAuth') == 'true';
+  const { personInfo, isAuth } = useAuth();
 
   const avatarExample = '/assets/AvatarExample.png';
 
@@ -55,8 +57,8 @@ function Header() {
                 <>
                   {!isDrawerOpen ? (
                     <Link href="/profile-info-and-statistic" className="profile-info-link">
-                      <Avatar avatarSrc={avatarExample} className="header-avatar" />
-                      <p>Name Surname</p>
+                      <Avatar avatarSrc={personInfo.profileImage} className="header-avatar" />
+                      <p>{personInfo.firstName + ' ' + personInfo.secondName}</p>
                     </Link>
                   ) : (
                     <>
@@ -68,7 +70,7 @@ function Header() {
                           return setIsDrawerOpen(false);
                         }}
                       >
-                        Profile info
+                        {t('profileLink')}
                       </Link>
                       <Link
                         href="/profile-info-and-statistic"
@@ -78,7 +80,7 @@ function Header() {
                           return setIsDrawerOpen(false);
                         }}
                       >
-                        Statistic
+                        {t('statsLink')}
                       </Link>
                     </>
                   )}
@@ -90,14 +92,14 @@ function Header() {
                     className={!isDrawerOpen ? 'nav-link-header' : 'nav-link-drawer'}
                     onClick={() => setIsDrawerOpen(false)}
                   >
-                    Log In
+                    {t('signInLink')}
                   </Link>
                   <Link
                     href="/signup"
                     className={!isDrawerOpen ? 'nav-link-header' : 'nav-link-drawer'}
                     onClick={() => setIsDrawerOpen(false)}
                   >
-                    Sign In
+                    {t('signUpLink')}
                   </Link>
                 </>
               )}
