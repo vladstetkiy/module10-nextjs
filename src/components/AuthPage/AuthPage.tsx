@@ -71,7 +71,7 @@ function AuthPage({ mode }: AuthPagePropsInterface) {
         logUp(values.email, values.password)
           .unwrap()
           .then((result) => {
-            if (result === 'ok') {
+            if (result) {
               showNotification(t('signUpSuccess'), 5000);
               router.push('/');
             }

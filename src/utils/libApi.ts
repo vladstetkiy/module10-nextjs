@@ -43,14 +43,30 @@ const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
 
 const libApi = {
   async get(endpoint: string) {
-    return fetchWithAuth(endpoint, { method: 'GET' });
+    const token = getAuthToken();
+    const response = await fetch(`/api${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!response.ok) throw new Error(`GET ${endpoint} failed`);
+    return response.json();
   },
 
   async post(endpoint: string, body: unknown) {
-    return fetchWithAuth(endpoint, {
+    const token = getAuthToken();
+    const response = await fetch(`/api${endpoint}`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify(body),
     });
+
+    if (!response.ok) throw new Error(`POST ${endpoint} failed`);
+    return response.json();
   },
 };
 
