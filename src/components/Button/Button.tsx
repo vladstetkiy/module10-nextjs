@@ -1,5 +1,5 @@
 import React from 'react';
-import './Button.css';
+import styles from './Button.module.css';
 
 type buttonType = 'button' | 'submit' | 'reset' | undefined;
 
@@ -17,11 +17,10 @@ class Button extends React.Component<PropsInterface> {
   }
 
   render() {
-    const classNameCalculate = this.props.className ? this.props.className : '';
     return (
       <button
         type={this.props.type ? this.props.type : 'button'}
-        className={`${'orange-button ' + classNameCalculate}`}
+        className={`${styles.orangeButton + ' ' + this.props.className}`}
         onClick={this.props.onClick}
         disabled={this.props.disabled}
       >

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import PostReactions from './PostReactions';
 import { useTranslation } from 'react-i18next';
 import libApi from '@/utils/libApi';
@@ -35,7 +35,7 @@ jest.mock('../Input/Input', () => ({ placeholder, value, onChange, title }: any)
   </div>
 ));
 
-jest.mock('./PostReactions.css', () => ({}));
+jest.mock('./PostReactions.module.css', () => ({}));
 
 describe('PostReactions Component', () => {
   const mockT = jest.fn((key: string) => {
@@ -84,12 +84,13 @@ describe('PostReactions Component', () => {
     jest.clearAllMocks();
   });
 
-  it('renders reactions for authenticated user', () => {
+  it('renders reactions for authenticated user', async () => {
     window.localStorage.getItem.mockReturnValue('true');
-
     (libApi.get as jest.Mock).mockResolvedValue(mockComments);
 
-    render(<PostReactions postId={1} />);
+    await act(async () => {
+      render(<PostReactions postId={1} />);
+    });
 
     expect(screen.getByTestId('like-svg')).toBeInTheDocument();
     expect(screen.getByTestId('comment-svg')).toBeInTheDocument();
@@ -105,7 +106,7 @@ describe('PostReactions Component', () => {
     expect(screen.queryByTestId('comment-input')).not.toBeInTheDocument();
   });
 
-  it('handles like click', async () => {
+  it('handles like click', () => {
     window.localStorage.getItem.mockReturnValue('true');
 
     render(<PostReactions postId={1} />);
@@ -114,7 +115,6 @@ describe('PostReactions Component', () => {
     fireEvent.click(likeButton!);
 
     expect(screen.getByText('22 likes')).toBeInTheDocument();
-
     expect(libApi.post).toHaveBeenCalledWith('/like', {
       postId: 1,
     });
@@ -124,7 +124,9 @@ describe('PostReactions Component', () => {
     window.localStorage.getItem.mockReturnValue('true');
     (libApi.get as jest.Mock).mockResolvedValue(mockComments);
 
-    render(<PostReactions postId={1} />);
+    await act(async () => {
+      render(<PostReactions postId={1} />);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('#1. Test comment 1')).toBeInTheDocument();
@@ -138,12 +140,14 @@ describe('PostReactions Component', () => {
     (libApi.get as jest.Mock).mockResolvedValue([]);
     (libApi.post as jest.Mock).mockResolvedValue({});
 
-    render(<PostReactions postId={1} />);
+    await act(async () => {
+      render(<PostReactions postId={1} />);
+    });
 
     const commentInput = screen.getByTestId('comment-input');
     fireEvent.change(commentInput, { target: { value: 'New comment' } });
 
-    const addButton = screen.getByTestId('button-add-comment-button');
+    const addButton = screen.getByTestId('button-default');
     fireEvent.click(addButton);
 
     expect(commentInput).toHaveValue('');
@@ -154,11 +158,13 @@ describe('PostReactions Component', () => {
     });
   });
 
-  it('toggles comments visibility', () => {
+  it('toggles comments visibility', async () => {
     window.localStorage.getItem.mockReturnValue('true');
     (libApi.get as jest.Mock).mockResolvedValue(mockComments);
 
-    render(<PostReactions postId={1} />);
+    await act(async () => {
+      render(<PostReactions postId={1} />);
+    });
 
     expect(screen.getByTestId('row-svg')).toBeInTheDocument();
 

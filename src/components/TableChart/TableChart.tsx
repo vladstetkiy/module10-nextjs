@@ -1,4 +1,4 @@
-import './TableChart.css';
+import styles from './TableChart.module.css';
 import {
   LineChart,
   Line,
@@ -75,21 +75,21 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
   let tableDataLikes: TableDataInterface[] = [];
   let tableDataComments: TableDataInterface[] = [];
 
-  if (comments) {
+  if (comments.length > 0) {
     tableDataComments = aggregatedBarData.map((item, i) => {
       return { row: `${item.date}`, col2: `${item.comments}`, col3: i + 1 };
     });
   }
-  if (likes) {
+  if (likes.length > 0) {
     tableDataLikes = aggregatedLineData.map((item, i) => {
       return { row: `${item.date}`, col2: `${item.likes}`, col3: i + 1 };
     });
   }
 
   return (
-    <div className="table-chart-wrapper">
-      <div className="table-container">
-        <h3 className="table-title">
+    <div className={styles.tableChartWrapper}>
+      <div className={styles.tableContainer}>
+        <h3 className={styles.tableTitle}>
           {mode === 'lineChart'
             ? t('likesCountStats')
             : mode === 'barChart'
@@ -99,28 +99,30 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
 
         {mode == 'table' ? (
           <>
-            <div className="table-header">
-              <div className="header-cell">{t('month')}</div>
-              <div className="header-cell second-column-header">{t('commentsCountStats')}</div>
-              <div className="header-cell">№</div>
+            <div className={styles.tableHeader}>
+              <div className={styles.headerCell}>{t('month')}</div>
+              <div className={`${styles.headerCell} ${styles.secondColumnHeader}`}>
+                {t('commentsCountStats')}
+              </div>
+              <div className={styles.headerCell}>№</div>
             </div>
 
-            <div className="table-body">
-              {likes
+            <div className={styles.tableBody}>
+              {likes.length > 0
                 ? tableDataLikes.map((item, index) => (
-                  <div key={index} className="table-row">
-                    <div className="data-ceil">{item.row}</div>
-                    <div className="data-cell second-column">{item.col2}</div>
-                    <div className="data-cell">{item.col3}</div>
+                  <div key={index} className={styles.tableRow}>
+                    <div className={styles.dataCeil}>{item.row}</div>
+                    <div className={`${styles.dataCell} ${styles.secondColumn}`}>{item.col2}</div>
+                    <div className={styles.dataCell}>{item.col3}</div>
                   </div>
                 ))
                 : null}
-              {comments
+              {comments.length > 0
                 ? tableDataComments.map((item, index) => (
-                  <div key={index} className="table-row">
-                    <div className="data-ceil">{item.row}</div>
-                    <div className="data-cell second-column">{item.col2}</div>
-                    <div className="data-cell">{item.col3}</div>
+                  <div key={index} className={styles.tableRow}>
+                    <div className={styles.dataCeil}>{item.row}</div>
+                    <div className={`${styles.dataCell} ${styles.secondColumn}`}>{item.col2}</div>
+                    <div className={styles.dataCell}>{item.col3}</div>
                   </div>
                 ))
                 : null}

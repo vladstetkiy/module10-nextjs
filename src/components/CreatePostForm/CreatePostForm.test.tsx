@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import CreatePostForm from './CreatePostForm';
 import { useTranslation } from 'react-i18next';
 import libApi from '@/utils/libApi';
@@ -49,7 +48,7 @@ jest.mock('../svg/UploadFileSvg/UploadFileSvg', () => ({ className }: any) => (
   <svg data-testid="upload-svg" className={className} />
 ));
 
-jest.mock('./CreatePostForm.css', () => ({}));
+jest.mock('./CreatePostForm.module.css', () => ({}));
 
 describe('CreatePostForm Component', () => {
   const mockCloseFunc = jest.fn();

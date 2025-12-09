@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import Statistic from './Statistic';
 import { useTranslation } from 'react-i18next';
 import libApi from '@/utils/libApi';
@@ -13,8 +13,8 @@ jest.mock('@/utils/libApi', () => ({
 
 jest.mock('../MetricCard/MetricCard', () => ({
   __esModule: true,
-  default: ({ cardTitle, cardValue, valueComment }: any) => (
-    <div data-testid="metric-card">
+  default: ({ cardTitle, cardValue, valueComment, className }: any) => (
+    <div data-testid="metric-card" className={className}>
       <span data-testid="metric-title">{cardTitle}</span>
       <span data-testid="metric-value">{cardValue}</span>
       <span data-testid="metric-comment">{valueComment}</span>
@@ -46,7 +46,7 @@ jest.mock('../TableChart/TableChart', () => ({
   ),
 }));
 
-jest.mock('./Statistic.css', () => ({}));
+jest.mock('./Statistic.module.css', () => ({}));
 
 describe('Statistic Component', () => {
   const mockT = jest.fn((key: string) => {
@@ -118,7 +118,9 @@ describe('Statistic Component', () => {
   });
 
   it('renders component without errors', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       expect(screen.getAllByTestId('metric-card')).toHaveLength(3);
@@ -128,7 +130,9 @@ describe('Statistic Component', () => {
   });
 
   it('loads and displays data on mount', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       expect(libApi.get).toHaveBeenCalledWith('/me/comments');
@@ -150,7 +154,9 @@ describe('Statistic Component', () => {
     });
     (libApi.get as jest.Mock).mockRejectedValue(new Error('API Error'));
 
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalled();
@@ -160,7 +166,9 @@ describe('Statistic Component', () => {
   });
 
   it('switches between table and chart view mode', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       expect(screen.getAllByTestId('table-chart')).toHaveLength(2);
@@ -183,7 +191,9 @@ describe('Statistic Component', () => {
   });
 
   it('uses translations for texts', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       expect(mockT).toHaveBeenCalledWith('commentsStat');
@@ -193,7 +203,9 @@ describe('Statistic Component', () => {
   });
 
   it('passes correct props to TableChart', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       const charts = screen.getAllByTestId('table-chart');
@@ -205,7 +217,9 @@ describe('Statistic Component', () => {
   });
 
   it('displays correct metric titles', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       const metricTitles = screen.getAllByTestId('metric-title');
@@ -216,7 +230,9 @@ describe('Statistic Component', () => {
   });
 
   it('displays metric comments', async () => {
-    render(<Statistic />);
+    await act(async () => {
+      render(<Statistic />);
+    });
 
     await waitFor(() => {
       const metricComments = screen.getAllByTestId('metric-comment');

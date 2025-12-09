@@ -1,6 +1,6 @@
 'use client';
 
-import './ProfileInfo.css';
+import styles from './ProfileInfo.module.css';
 import PersonShortInfo from '../PersonShortInfo/PersonShortInfo';
 import Input from '../Input/Input';
 import MailSvg from '../svg/MailSvg/MailSvg';
@@ -12,8 +12,11 @@ import Link from 'next/link';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
-import { showNotification } from '../../utils/ShowNotification';
+import { useNotification } from '@/contexts/NotificationContext/NotificationContext';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from '@tanstack/react-query';
+import libApi from '@/utils/libApi';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ErrorsInterface {
   email: string;
@@ -25,13 +28,48 @@ function ProfileInfo() {
   const { themeToggle } = useTheme();
   const { logOut } = useAuth();
   const { i18n, t } = useTranslation();
+  const { showNotification } = useNotification();
   const [newUsername, setNewUsername] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newDescription, setNewDescription] = useState('');
+  const queryClient = useQueryClient();
   const [errors, setErrors] = useState<ErrorsInterface>({
     email: '',
     username: '',
     description: '',
+  });
+
+  const mutation = `
+    mutation UpdateProfile($input: UpdateProfileInput!) {
+      updateProfile(input: $input) {
+        id
+        username
+        email
+        description
+      }
+    }
+  `;
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (profileData: { email: string; description: string; username: string }) =>
+      libApi.post('/graphql', {
+        query: mutation,
+        operationName: 'UpdateProfile',
+        variables: {
+          input: profileData,
+        },
+      }),
+    onSuccess: () => {
+      showNotification(t('updatedProfile'), 5000);
+      queryClient.invalidateQueries({
+        queryKey: ['me'],
+      });
+      clearForm();
+    },
+    onError: (error) => {
+      console.error('Error updating profile:', error);
+      showNotification(t('updateProfileError'), 5000);
+    },
   });
 
   const toggleLanguage = () => {
@@ -99,72 +137,44 @@ function ProfileInfo() {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const validateResult = validateForm();
 
     if (validateResult) {
-      showNotification(t('updatedProfile'), 5000);
-
-      const token = localStorage.getItem('authToken');
-      const mutation = `
-        mutation UpdateProfile($input: UpdateProfileInput!) {
-          updateProfile(input: $input) {
-            id
-            username
-            email
-            description
-          }
-        }
-      `;
-
-      fetch('/api/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        },
-        body: JSON.stringify({
-          query: mutation,
-          operationName: 'UpdateProfile',
-          variables: {
-            input: {
-              email: newEmail,
-              description: newDescription,
-              username: newUsername,
-            },
-          },
-        }),
+      updateProfileMutation.mutate({
+        email: newEmail,
+        description: newDescription,
+        username: newUsername,
       });
-      clearForm();
     }
   };
 
   return (
-    <main className="profile-info">
-      <form className="edit-profile">
+    <main className={styles.profileInfo}>
+      <form className={styles.editProfile} onSubmit={handleSubmit}>
         <h2>{t('editProfile')}</h2>
-        <PersonShortInfo avatarClassName="profile-avatar" isMe={true} />
+        <PersonShortInfo avatarClassName={styles.profileAvatar} isMe={true} />
         <Input
-          inputClassName="username-input"
+          inputClassName={styles.usernameInput}
           placeholder="@username123"
           value={newUsername}
           onChange={handleUsernameInputChange}
           svgIconComponent={<UserSvg />}
           title={t('username')}
         />
-        {errors.username ? <p className="error-message">{errors.username}</p> : null}
+        {errors.username ? <p className={styles.errorMessage}>{errors.username}</p> : null}
         <Input
-          inputClassName="email-input"
+          inputClassName={styles.emailInput}
           placeholder="email@domain.com"
           value={newEmail}
           onChange={handleEmailInputChange}
           svgIconComponent={<MailSvg />}
           title={t('email')}
         />
-        {errors.email ? <p className="error-message">{errors.email}</p> : null}
+        {errors.email ? <p className={styles.errorMessage}>{errors.email}</p> : null}
         <Input
-          inputClassName="description-input"
+          inputClassName={styles.descriptionInput}
           placeholder={t('descriptionPlaceholder')}
           value={newDescription}
           onChange={handleDescriptionInputChange}
@@ -172,17 +182,17 @@ function ProfileInfo() {
           title={t('description')}
           additionalInfo={t('maxDescLength')}
         />
-        {errors.description ? <p className="error-message">{errors.description}</p> : null}
+        {errors.description ? <p className={styles.errorMessage}>{errors.description}</p> : null}
         <Button
-          text={t('saveProfile')}
-          className="save-changes-button"
+          text={updateProfileMutation.isPending ? t('saving') : t('saveProfile')}
+          className={styles.saveChangesButton}
           type="submit"
-          onClick={handleSubmit}
+          disabled={updateProfileMutation.isPending}
         />
       </form>
-      <div className="second-column-wrapper">
-        <section className="Preferences">
-          <h2>{t('preferencies')}</h2>
+      <div className={styles.secondColumnWrapper}>
+        <section className={styles.Preferences}>
+          <h2 className=".h2">{t('preferencies')}</h2>
           <Toggle
             visualMode="toggle"
             onToggle={themeToggle}
@@ -196,10 +206,10 @@ function ProfileInfo() {
             secondOption={i18n.language === 'en' ? 'RU' : 'EN'}
           />
         </section>
-        <section className="Actions">
+        <section className={styles.Actions}>
           <h2>{t('actions')}</h2>
-          <Link href="/" className="logout-link-button">
-            <Button text={t('logout')} onClick={logOut} className="logout-button" />
+          <Link href="/" className={styles.logoutLinkButton}>
+            <Button text={t('logout')} onClick={logOut} className={styles.logoutButton} />
           </Link>
         </section>
       </div>

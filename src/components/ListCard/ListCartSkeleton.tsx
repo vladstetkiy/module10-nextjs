@@ -1,10 +1,10 @@
-import './ListCard.css';
+import styles from './ListCard.module.css';
 import Skeleton from '@mui/material/Skeleton';
 
 function ListCardSkeleton() {
   return (
-    <div className="list-container">
-      <Skeleton variant="text" width={150} height={24} className="list-container-title" />
+    <div className={styles.listContainer}>
+      <Skeleton variant="text" width={150} height={24} className={styles.listContainerTitle} />
       <div
         style={{
           display: 'flex',

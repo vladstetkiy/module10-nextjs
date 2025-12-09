@@ -2,7 +2,16 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import Toggle from './Toggle';
 import { ThemeProvider, createTheme } from '@mui/material';
 
-jest.mock('./Toggle.css', () => ({}));
+jest.mock('./Toggle.module.css', () => ({
+  toggle: 'toggle',
+  segmentControl: 'segmentControl',
+  firstOption: 'firstOption',
+  secondOption: 'secondOption',
+  toggleOn: 'toggleOn',
+  toggleOff: 'toggleOff',
+  toggleContainer: 'toggleContainer',
+  toggleHandle: 'toggleHandle',
+}));
 
 const theme = createTheme();
 
@@ -106,11 +115,11 @@ describe('Toggle Component', () => {
       />,
     );
 
-    const tableOption = container.querySelector('.first-option');
-    const chartOption = container.querySelector('.second-option');
+    const tableOption = container.querySelector('.firstOption');
+    const chartOption = container.querySelector('.secondOption');
 
-    expect(chartOption).toHaveClass('toggle-on');
-    expect(tableOption).not.toHaveClass('toggle-on');
+    expect(chartOption).toHaveClass('toggleOn');
+    expect(tableOption).not.toHaveClass('toggleOn');
   });
 
   it('shows correct active state when isOn=true in segment-control', () => {
@@ -126,11 +135,11 @@ describe('Toggle Component', () => {
       />,
     );
 
-    const tableOption = container.querySelector('.first-option');
-    const chartOption = container.querySelector('.second-option');
+    const tableOption = container.querySelector('.firstOption');
+    const chartOption = container.querySelector('.secondOption');
 
-    expect(tableOption).toHaveClass('toggle-on');
-    expect(chartOption).not.toHaveClass('toggle-on');
+    expect(tableOption).toHaveClass('toggleOn');
+    expect(chartOption).not.toHaveClass('toggleOn');
   });
 
   it('initial switch state matches isOn prop when true', () => {

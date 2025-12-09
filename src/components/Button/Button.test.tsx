@@ -38,11 +38,10 @@ describe('Button Component', () => {
   });
 
   it('applies custom className', () => {
-    render(<Button text="Test" className="custom-class" />);
+    render(<Button text="Test" className="customClass" />);
 
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('orange-button');
-    expect(button).toHaveClass('custom-class');
+    expect(button).toHaveClass('customClass');
   });
 
   it('can be disabled', () => {

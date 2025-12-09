@@ -73,7 +73,21 @@ jest.mock('../svg/MailSvg/MailSvg', () => () => <svg data-testid="mail-svg" />);
 jest.mock('../svg/UserSvg/UserSvg', () => () => <svg data-testid="user-svg" />);
 jest.mock('../svg/PenSvg/PenSvg', () => () => <svg data-testid="pen-svg" />);
 
-jest.mock('./ProfileInfo.css', () => ({}));
+jest.mock('./ProfileInfo.module.css', () => ({
+  profileInfo: 'profileInfo',
+  editProfile: 'editProfile',
+  profileAvatar: 'profileAvatar',
+  usernameInput: 'usernameInput',
+  emailInput: 'emailInput',
+  descriptionInput: 'descriptionInput',
+  saveChangesButton: 'saveChangesButton',
+  errorMessage: 'errorMessage',
+  logoutButton: 'logoutButton',
+  logoutLinkButton: 'logoutLinkButton',
+  secondColumnWrapper: 'secondColumnWrapper',
+  Preferences: 'Preferences',
+  Actions: 'Actions',
+}));
 
 jest.mock('../../utils/ShowNotification', () => ({
   showNotification: jest.fn(),
@@ -153,7 +167,7 @@ describe('ProfileInfo Component', () => {
     fireEvent.change(usernameInput, { target: { value: 'ab' } });
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
 
-    const submitButton = screen.getByTestId('button-save-changes-button');
+    const submitButton = screen.getByText('Save Profile');
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -178,7 +192,7 @@ describe('ProfileInfo Component', () => {
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(descriptionInput, { target: { value: 'Valid description' } });
 
-    const submitButton = screen.getByTestId('button-save-changes-button');
+    const submitButton = screen.getByText('Save Profile');
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -201,7 +215,7 @@ describe('ProfileInfo Component', () => {
   it('handles logout', () => {
     render(<ProfileInfo />);
 
-    const logoutButton = screen.getByTestId('button-logout-button');
+    const logoutButton = screen.getByText('Logout');
     fireEvent.click(logoutButton);
 
     expect(mockLogOut).toHaveBeenCalled();

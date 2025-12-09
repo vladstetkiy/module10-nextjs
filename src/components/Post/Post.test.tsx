@@ -5,6 +5,13 @@ import { PostInterface } from '@/types/post.types';
 let personShortInfoProps: any = null;
 let postReactionsProps: any = null;
 
+jest.mock('./Post.module.css', () => ({
+  post: 'post',
+  postAvatar: 'postAvatar',
+  postImg: 'postImg',
+  postDescription: 'postDescription',
+}));
+
 jest.mock('../PersonShortInfo/PersonShortInfo', () => {
   const MockPersonShortInfo = (props: any) => {
     personShortInfoProps = props;
@@ -22,8 +29,6 @@ jest.mock('../PostReactions/PostReactions', () => {
   MockPostReactions.displayName = 'MockPostReactions';
   return MockPostReactions;
 });
-
-jest.mock('./Post.css', () => ({}));
 
 describe('Post Component', () => {
   const mockPost: PostInterface = {
@@ -55,7 +60,7 @@ describe('Post Component', () => {
 
     expect(personShortInfoProps).toEqual({
       itemId: 123,
-      avatarClassName: 'post-avatar',
+      avatarClassName: 'postAvatar',
     });
 
     expect(postReactionsProps).toEqual({
@@ -74,7 +79,7 @@ describe('Post Component', () => {
     const image = screen.getByRole('img');
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'test-image.jpg');
-    expect(image).toHaveClass('post-img');
+    expect(image).toHaveClass('postImg');
   });
 
   it('does not render image when not provided', () => {

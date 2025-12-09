@@ -1,6 +1,10 @@
-import './ListCard.css';
+'use client';
+
+import styles from './ListCard.module.css';
 import PersonShortInfo from '../PersonShortInfo/PersonShortInfo';
 import { type UserInterface, type GroupInterface } from '../../types/post.types';
+import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 interface PropsInterface {
   title: string;
   items: UserInterface[] | GroupInterface[];
@@ -8,15 +12,21 @@ interface PropsInterface {
 }
 
 function ListCard({ title, items, isGroups }: PropsInterface) {
+  const { isAuth } = useAuth();
+  const { t } = useTranslation();
+  if (!isAuth) {
+    return null;
+  }
+
   if (!Array.isArray(items)) {
     console.error('Items is not an array:', items);
     return null;
   }
   return (
-    <div className="list-container">
-      <p className="list-container-title">{title}</p>
+    <div className={styles.listContainer}>
+      <p className={styles.listContainerTitle}>{t(title)}</p>
       {items.map((item) => {
-        return <PersonShortInfo itemId={item.id} isGroup={isGroups} />;
+        return <PersonShortInfo key={item.id} itemId={item.id} isGroup={isGroups} />;
       })}
     </div>
   );

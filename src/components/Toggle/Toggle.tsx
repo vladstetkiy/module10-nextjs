@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { Box, Switch, Typography, styled } from '@mui/material';
-import './Toggle.css';
+import styles from './Toggle.module.css';
 
 type visualModes = 'toggle' | 'segment-control';
 
@@ -73,11 +75,11 @@ function Toggle({
 
   if (visualMode === 'segment-control') {
     return (
-      <button className="segment-control" onClick={handleClick}>
-        <div className={'first-option ' + `${isOnState ? 'toggle-on' : ''}`}>
+      <button className={styles.segmentControl} onClick={handleClick}>
+        <div className={`${styles.firstOption} ${isOnState ? styles.toggleOn : ''}`}>
           {firstOption ? firstOption : ''}
         </div>
-        <div className={'second-option ' + `${!isOnState ? 'toggle-on' : ''}`}>
+        <div className={`${styles.secondOption} ${!isOnState ? styles.toggleOn : ''}`}>
           {secondOption ? secondOption : ''}
         </div>
       </button>
@@ -85,9 +87,9 @@ function Toggle({
   }
 
   return (
-    <Box display="flex" alignItems="center" component="div" className="toggle">
+    <Box display="flex" alignItems="center" component="div" className={styles.toggle}>
       {firstOption && (
-        <Typography variant="body2" className="first-option" sx={{ mr: '12px' }}>
+        <Typography variant="body2" className={styles.firstOption} sx={{ mr: '12px' }}>
           {firstOption}
         </Typography>
       )}
@@ -95,7 +97,7 @@ function Toggle({
       <MaterialSwitch checked={isOnState} onChange={handleClick} className={className} />
 
       {secondOption && (
-        <Typography variant="body2" className="second-option" sx={{ ml: '12px' }}>
+        <Typography variant="body2" className={styles.secondOption} sx={{ ml: '12px' }}>
           {secondOption}
         </Typography>
       )}

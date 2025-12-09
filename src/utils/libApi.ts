@@ -1,62 +1,30 @@
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-  useMutation,
-  UseQueryOptions,
-  UseMutationOptions,
-} from '@tanstack/react-query';
+import { PostInterface, UserInterface, GroupInterface, CommentInterface } from '@/types/post.types';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: 1,
-    },
-  },
-});
-
-export { QueryClientProvider, queryClient };
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 const getAuthToken = (): string | null => {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('authToken');
 };
 
-const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
-  const token = getAuthToken();
-  const response = await fetch(`/api${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Request to ${endpoint} failed with status ${response.status}`);
-  }
-
-  return response.json();
-};
-
 const libApi = {
   async get(endpoint: string) {
     const token = getAuthToken();
-    const response = await fetch(`/api${endpoint}`, {
+    const response = await fetch(`${baseUrl}/api${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
-    if (!response.ok) throw new Error(`GET ${endpoint} failed`);
+    if (!response.ok) {
+      throw new Error(`GET ${endpoint} failed`);
+    }
     return response.json();
   },
 
   async post(endpoint: string, body: unknown) {
     const token = getAuthToken();
-    const response = await fetch(`/api${endpoint}`, {
+    const response = await fetch(`${baseUrl}/api${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,62 +33,66 @@ const libApi = {
       body: JSON.stringify(body),
     });
 
-    if (!response.ok) throw new Error(`POST ${endpoint} failed`);
+    if (!response.ok) {
+      throw new Error(`POST ${endpoint} failed`);
+    }
     return response.json();
   },
 };
 
-const useApiQuery = <TData = unknown, TError = Error>(
-  endpoint: string,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<TData, TError>({
-    queryKey: [endpoint],
-    queryFn: () => fetchWithAuth(endpoint, { method: 'GET' }),
-    ...options,
-  });
-};
+async function getPosts() {
+  const posts = await libApi.get('/posts');
+  return posts as PostInterface[];
+}
 
-const useApiMutation = <TVariables = unknown, TData = unknown, TError = Error>(
-  endpoint: string,
-  method: 'POST' | 'PUT' | 'DELETE' | 'PATCH' = 'POST',
-  options?: Omit<UseMutationOptions<TData, TError, TVariables>, 'mutationFn'>,
-) => {
-  return useMutation<TData, TError, TVariables>({
-    mutationFn: (variables: TVariables) =>
-      fetchWithAuth(endpoint, {
-        method,
-        body: JSON.stringify(variables),
-      }),
-    ...options,
-  });
-};
+async function getSuggestedPeople() {
+  const suggested = await libApi.get('/getSuggested');
+  return suggested as UserInterface[];
+}
 
-const useApiGet = <TData = unknown, TError = Error>(
-  endpoint: string,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) => useApiQuery<TData, TError>(endpoint, options);
+async function getGroups() {
+  const groups = await libApi.get('/groups');
+  return groups as GroupInterface[];
+}
 
-const useApiPost = <TVariables = unknown, TData = unknown, TError = Error>(
-  endpoint: string,
-  options?: Omit<UseMutationOptions<TData, TError, TVariables>, 'mutationFn'>,
-) => useApiMutation<TVariables, TData, TError>(endpoint, 'POST', options);
+async function getMe() {
+  const me = await libApi.get('/me');
+  return me as UserInterface;
+}
+
+async function getUser(id: number) {
+  const response = await libApi.get(`/users/${id}`);
+  return response as UserInterface;
+}
+
+async function getGroup(id: number) {
+  const response = await libApi.get(`/groups/${id}`);
+  return response as GroupInterface;
+}
+
+async function getPostComments(id: number) {
+  const response = await libApi.get(`/posts/${id}/comments`);
+  return response as CommentInterface[];
+}
+
+async function getStatistic() {
+  return await Promise.all([
+    libApi.get('/me/comments'),
+    libApi.get('/me/likes'),
+    libApi.get('/me/posts'),
+  ]);
+}
 
 export {
   libApi as default,
   libApi,
-  useApiQuery,
-  useApiMutation,
-  useApiGet,
-  useApiPost,
+  getStatistic,
+  getMe,
   getAuthToken,
+  getPosts,
+  getSuggestedPeople,
+  getGroups,
+  getUser,
+  getGroup,
+  getPostComments,
 };
-
-export type ApiQueryOptions<TData, TError> = Omit<
-  UseQueryOptions<TData, TError>,
-  'queryKey' | 'queryFn'
->;
-export type ApiMutationOptions<TVariables, TData, TError> = Omit<
-  UseMutationOptions<TData, TError, TVariables>,
-  'mutationFn'
->;

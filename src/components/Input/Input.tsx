@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { memo } from 'react';
 import './input.css';
 import InfoSvg from '../svg/InfoSvg/InfoSvg';
 
@@ -57,4 +58,4 @@ function Input({
   );
 }
 
-export default Input;
+export default memo(Input);

@@ -15,7 +15,7 @@ jest.mock('../Avatar/Avatar', () => ({ avatarSrc, className }: any) => (
   </div>
 ));
 
-jest.mock('./PersonShortInfo.css', () => ({}));
+jest.mock('./PersonShortInfo.module.css', () => ({}));
 
 describe('PersonShortInfo Component', () => {
   const mockUser = {

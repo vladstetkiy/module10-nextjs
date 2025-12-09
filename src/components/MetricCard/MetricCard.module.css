@@ -1,0 +1,19 @@
+.metricCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: var(--background-fill-surface);
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+  width: 100%;
+}
+
+.metricCardValue {
+  font-weight: 600;
+  font-size: 40px;
+}
+
+.metricCardValueComment {
+  color: var(--component-text-gray);
+}

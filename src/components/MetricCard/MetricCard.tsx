@@ -1,4 +1,4 @@
-import './MetricCard.css';
+import styles from './MetricCard.module.css';
 
 interface MetricCardPropsInterface {
   cardTitle: string;
@@ -14,10 +14,10 @@ function MetricCard({
   className,
 }: MetricCardPropsInterface) {
   return (
-    <section className={'metric-card ' + className}>
-      <h2 className="metric-card-title">{cardTitle}</h2>
-      <p className="metric-card-value">{cardValue}</p>
-      <p className="metric-card-value-comment">{valueComment}</p>
+    <section className={`${styles.metricCard} ${className || ''}`.trim()}>
+      <h2 className={styles.metricCardTitle}>{cardTitle}</h2>
+      <p className={styles.metricCardValue}>{cardValue}</p>
+      <p className={styles.metricCardValueComment}>{valueComment}</p>
     </section>
   );
 }

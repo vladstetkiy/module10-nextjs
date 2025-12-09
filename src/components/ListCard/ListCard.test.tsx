@@ -13,7 +13,7 @@ jest.mock('../PersonShortInfo/PersonShortInfo', () => {
   return MockPersonShortInfo;
 });
 
-jest.mock('./ListCard.css', () => ({}));
+jest.mock('./ListCard.module.css', () => ({}));
 
 describe('ListCard Component', () => {
   const mockUsers = [

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PushNotification from './PushNotification';
 
-jest.mock('./PushNotification.css', () => ({}));
+jest.mock('./PushNotification.module.css', () => ({}));
 
 jest.mock('react-dom', () => ({
   ...jest.requireActual('react-dom'),

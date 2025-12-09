@@ -26,7 +26,7 @@ jest.mock('@/components/svg/LogoSvg/LogoSvg', () => ({ className }: any) => (
   <svg data-testid="logo" className={className} />
 ));
 
-jest.mock('./Header.css', () => ({}));
+jest.mock('./Header.module.css', () => ({}));
 
 jest.mock('next/link', () => {
   return function MockLink({ children, href, className, onClick }: any) {

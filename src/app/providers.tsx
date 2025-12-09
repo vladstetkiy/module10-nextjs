@@ -1,12 +1,22 @@
 'use client';
 
 import { MockProvider } from '@/contexts/MockProvider';
-import { QueryClientProvider, queryClient } from '../utils/libApi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { useEffect } from 'react';
 import i18n from '@/app/i18next';
 import { useTheme } from '@/contexts/ThemeContext';
+import { NotificationProvider } from '@/contexts/NotificationContext/NotificationContext';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   useTheme();
@@ -26,7 +36,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <div className="theme-wrapper">
       <QueryClientProvider client={queryClient}>
         <MockProvider>
-          <Provider store={store}>{children}</Provider>
+          <NotificationProvider>
+            <Provider store={store}>{children}</Provider>
+          </NotificationProvider>
         </MockProvider>
       </QueryClientProvider>
     </div>

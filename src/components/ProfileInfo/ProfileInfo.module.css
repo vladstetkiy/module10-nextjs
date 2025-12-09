@@ -1,0 +1,113 @@
+.profileInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 50px;
+  padding: 24px 30px 0px 30px;
+  margin-bottom: 200px;
+
+  .h2 {
+    font-size: 22px;
+  }
+}
+
+.errorMessage {
+  color: red;
+}
+
+.profileInfo section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 32px;
+  min-width: 575px;
+}
+
+.profileAvatar {
+  min-width: 64px;
+  min-height: 64px;
+  max-height: 64px;
+}
+
+.usernameInput,
+.emailInput {
+  width: 327px;
+  height: 48px;
+}
+
+.descriptionInput {
+  width: 575px;
+  min-height: 110px;
+}
+
+.saveChangesButton {
+  width: 244px;
+  height: 44px;
+}
+
+.errorMessage {
+  margin-top: -30px;
+}
+
+.logoutButton {
+  width: 144px;
+}
+
+.logoutLinkButton {
+  text-decoration: none;
+  color: var(--component-text-dark);
+}
+
+.editProfile {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.secondColumnWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+@media (max-width: 1300px) {
+  .profileInfo section {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 850px) {
+
+  .usernameInput,
+  .emailInput {
+    width: 100%;
+    height: 48px;
+  }
+
+  .editProfile {
+    width: 100%;
+  }
+
+  .profileInfo {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 36px;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .profileInfo section {
+    gap: 12px;
+    width: 100%;
+  }
+
+  .logoutButton {
+    width: 96px;
+    height: 36px;
+  }
+
+  .descriptionInput {
+    width: 100%;
+  }
+}

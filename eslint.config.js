@@ -49,11 +49,10 @@ export default tseslint.config(
     },
   },
 
-  // Конфигурация для тестовых файлов
   {
     files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}', '**/__tests__/**/*.{js,jsx,ts,tsx}'],
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off', // Разрешаем any
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',

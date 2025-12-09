@@ -6,7 +6,7 @@ jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
 }));
 
-jest.mock('../Avatar/Avatar', () => ({ avatarSrc, className }: any) => (
+jest.mock('../Avatar/Avatar', () => ({ className }: any) => (
   <div data-testid="avatar" className={className}>
     Avatar
   </div>

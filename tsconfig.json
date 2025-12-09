@@ -13,6 +13,10 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,

@@ -1,3 +1,4 @@
+// TableChart.test.tsx
 import { render, screen } from '@testing-library/react';
 import TableChart from './TableChart';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ jest.mock('recharts', () => ({
   Bar: () => <div data-testid="bar" />,
 }));
 
-jest.mock('./TableChart.css', () => ({}));
+jest.mock('./TableChart.module.css', () => ({}));
 
 describe('TableChart Component', () => {
   const mockT = jest.fn((key: string) => key);
@@ -47,7 +48,6 @@ describe('TableChart Component', () => {
 
     expect(mockT).toHaveBeenCalledWith('month');
     expect(mockT).toHaveBeenCalledWith('commentsCountStats');
-
     expect(mockT).toHaveBeenCalledWith('likesStat');
   });
 
