@@ -1,15 +1,15 @@
 'use client';
 
-import styles from './ProfileInfo.module.css';
-import PersonShortInfo from '../PersonShortInfo/PersonShortInfo';
-import Input from '../Input/Input';
-import MailSvg from '../svg/MailSvg/MailSvg';
-import UserSvg from '../svg/UserSvg/UserSvg';
-import PenSvg from '../svg/PenSvg/PenSvg';
-import Button from '../Button/Button';
-import Toggle from '../Toggle/Toggle';
+import styles from './page.module.css';
+import PersonShortInfo from '@/components/PersonShortInfo/PersonShortInfo';
+import Input from '@/components/Input/Input';
+import MailSvg from '@/components/svg/MailSvg/MailSvg';
+import UserSvg from '@/components/svg/UserSvg/UserSvg';
+import PenSvg from '@/components/svg/PenSvg/PenSvg';
+import Button from '@/components/Button/Button';
+import Toggle from '@/components/Toggle/Toggle';
 import Link from 'next/link';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useThemeStore } from '@/contexts/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
 import { useNotification } from '@/contexts/NotificationContext/NotificationContext';
@@ -25,7 +25,7 @@ interface ErrorsInterface {
 }
 
 function ProfileInfo() {
-  const { themeToggle } = useTheme();
+  const themeToggle = useThemeStore((state) => state.themeToggle);
   const { logOut } = useAuth();
   const { i18n, t } = useTranslation();
   const { showNotification } = useNotification();
@@ -64,7 +64,6 @@ function ProfileInfo() {
       queryClient.invalidateQueries({
         queryKey: ['me'],
       });
-      clearForm();
     },
     onError: (error) => {
       console.error('Error updating profile:', error);
@@ -90,16 +89,18 @@ function ProfileInfo() {
     setNewDescription(event.target.value);
   };
 
-  const clearForm = () => {
-    setNewUsername('');
-    setNewEmail('');
-    setNewDescription('');
-    setErrors({
-      email: '',
-      username: '',
-      description: '',
-    });
-  };
+  //this function commented to show how notifications working together
+
+  // const clearForm = () => {
+  //   setNewUsername('');
+  //   setNewEmail('');
+  //   setNewDescription('');
+  //   setErrors({
+  //     email: '',
+  //     username: '',
+  //     description: '',
+  //   });
+  // };
 
   const validateForm = () => {
     const newErrors = {
@@ -148,6 +149,10 @@ function ProfileInfo() {
         username: newUsername,
       });
     }
+
+    //this function commented to show how notifications working together
+
+    //clearForm();
   };
 
   return (
@@ -184,11 +189,12 @@ function ProfileInfo() {
         />
         {errors.description ? <p className={styles.errorMessage}>{errors.description}</p> : null}
         <Button
-          text={updateProfileMutation.isPending ? t('saving') : t('saveProfile')}
           className={styles.saveChangesButton}
           type="submit"
           disabled={updateProfileMutation.isPending}
-        />
+        >
+          {updateProfileMutation.isPending ? t('saving') : t('saveProfile')}
+        </Button>
       </form>
       <div className={styles.secondColumnWrapper}>
         <section className={styles.Preferences}>
@@ -209,7 +215,9 @@ function ProfileInfo() {
         <section className={styles.Actions}>
           <h2>{t('actions')}</h2>
           <Link href="/" className={styles.logoutLinkButton}>
-            <Button text={t('logout')} onClick={logOut} className={styles.logoutButton} />
+            <Button onClick={logOut} className={styles.logoutButton}>
+              <p>{t('logout')}</p>
+            </Button>
           </Link>
         </section>
       </div>

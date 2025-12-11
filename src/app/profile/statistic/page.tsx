@@ -1,9 +1,9 @@
 'use client';
 
-import styles from './Statistic.module.css';
-import MetricCard from '../MetricCard/MetricCard';
-import Toggle from '../Toggle/Toggle';
-import TableChart from '../TableChart/TableChart';
+import styles from './page.module.css';
+import MetricCard from '@/components/MetricCard/MetricCard';
+import Toggle from '@/components/Toggle/Toggle';
+import TableChart from '@/components/TableChart/TableChart';
 import { useState } from 'react';
 import { getStatistic } from '@/utils/libApi';
 import { useTranslation } from 'react-i18next';

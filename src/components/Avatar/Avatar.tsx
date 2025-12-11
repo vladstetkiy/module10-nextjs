@@ -12,7 +12,7 @@ function Avatar({ avatarSrc = '', className }: AvatarPropsInterface) {
       src={avatarSrc}
       width={50}
       height={50}
-      alt=""
+      alt="a"
       className={className + ' ' + styles.avatar}
     />
   );

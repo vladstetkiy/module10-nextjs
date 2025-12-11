@@ -84,31 +84,32 @@ function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
     <>
       <div className={styles.reactionsCount}>
         <div className={styles.likes}>
-          <button onClick={handleLike}>
+          <Button onClick={handleLike} isStyleDisabled={true}>
             <LikeSvg />
-          </button>
+          </Button>
 
           <p>
             {likesCount} {t('likesPlural2')}
           </p>
         </div>
         <div className={styles.commentsCount}>
-          <button>
+          <Button isStyleDisabled={true}>
             <CommentSvg />
-          </button>
+          </Button>
           {isAuth ? (
             <>
               <p>
                 {comments?.length || 0} {t('commentsPlural2')}
               </p>
-              <button
+              <Button
                 onClick={toggleCommentsVisibility}
                 className={
                   isCommentsVisible ? styles.commentSvgVisible : styles.commentSvgInvisible
                 }
+                isStyleDisabled={true}
               >
                 <RowSvg />
-              </button>
+              </Button>
             </>
           ) : (
             <p>{t('loginToSeeComments')}</p>
@@ -135,11 +136,9 @@ function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
             svgIconComponent={<PenSvg />}
             title={t('addComment')}
           />
-          <Button
-            text={t('addComment')}
-            onClick={handleAddComment}
-            className={styles.addCommentButton}
-          />
+          <Button onClick={handleAddComment} className={styles.addCommentButton}>
+            {t('addComment')}
+          </Button>
         </>
       ) : null}
     </>

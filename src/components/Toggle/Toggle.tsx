@@ -3,16 +3,18 @@
 import { useState } from 'react';
 import { Box, Switch, Typography, styled } from '@mui/material';
 import styles from './Toggle.module.css';
+import Button from '../Button/Button';
 
 type visualModes = 'toggle' | 'segment-control';
 
 interface TogglePropsInterface {
-  isOn: boolean;
+  isOn?: boolean;
   onToggle?: () => void;
   visualMode: visualModes;
   firstOption?: string;
   secondOption?: string;
   className?: string;
+  isOnSegment?: boolean;
 }
 
 const MaterialSwitch = styled(Switch)(({ theme }) => ({
@@ -63,6 +65,7 @@ function Toggle({
   firstOption,
   secondOption,
   className,
+  isOnSegment,
 }: TogglePropsInterface) {
   const [isOnState, setIsOnState] = useState(isOn);
 
@@ -75,14 +78,14 @@ function Toggle({
 
   if (visualMode === 'segment-control') {
     return (
-      <button className={styles.segmentControl} onClick={handleClick}>
-        <div className={`${styles.firstOption} ${isOnState ? styles.toggleOn : ''}`}>
+      <Button className={styles.segmentControl} onClick={handleClick} isStyleDisabled={true}>
+        <div className={`${styles.firstOption} ${isOnSegment ? styles.toggleOn : ''}`}>
           {firstOption ? firstOption : ''}
         </div>
-        <div className={`${styles.secondOption} ${!isOnState ? styles.toggleOn : ''}`}>
+        <div className={`${styles.secondOption} ${!isOnSegment ? styles.toggleOn : ''}`}>
           {secondOption ? secondOption : ''}
         </div>
-      </button>
+      </Button>
     );
   }
 

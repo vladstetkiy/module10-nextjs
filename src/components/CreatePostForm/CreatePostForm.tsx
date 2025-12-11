@@ -163,8 +163,6 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     event.preventDefault();
 
     const validateResult = validateForm();
-    console.log(validateResult);
-    console.log(newTitle, newDescription);
 
     if (validateResult) {
       await createPostMutation.mutateAsync({
@@ -183,9 +181,9 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
       <section className={styles.createPostContainer}>
         <div className={styles.createPostFormHeader}>
           <h2 className={styles.createPostFormTitle}>{t('createNewPost')}</h2>
-          <button onClick={closeFunc}>
+          <Button onClick={closeFunc} isStyleDisabled={true}>
             <CrossSvg className={styles.createPostFormCross} />
-          </button>
+          </Button>
         </div>
         <form className={styles.createPostForm} onSubmit={handleSubmit}>
           <Input
@@ -232,7 +230,9 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
           </div>
           {errors.file ? <p className={styles.createPostErrorMessage}>{errors.file}</p> : null}
 
-          <Button text={t('create')} className={styles.createPostFormButton} type="submit" />
+          <Button className={styles.createPostFormButton} type="submit">
+            {t('create')}
+          </Button>
         </form>
       </section>
       <div className={styles.createPostOverlay}></div>

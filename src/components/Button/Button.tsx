@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styles from './Button.module.css';
 
 type buttonType = 'button' | 'submit' | 'reset' | undefined;
 
 interface PropsInterface {
-  text: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   type?: buttonType;
   disabled?: boolean;
+  isStyleDisabled?: boolean;
+  children?: ReactNode;
 }
 
 class Button extends React.Component<PropsInterface> {
@@ -17,14 +18,15 @@ class Button extends React.Component<PropsInterface> {
   }
 
   render() {
+    const orangeButtonStyle = !this.props.isStyleDisabled ? styles.orangeButton : '';
     return (
       <button
         type={this.props.type ? this.props.type : 'button'}
-        className={`${styles.orangeButton + ' ' + this.props.className}`}
+        className={`${orangeButtonStyle} ${this.props.className}`}
         onClick={this.props.onClick}
         disabled={this.props.disabled}
       >
-        <p>{this.props.text}</p>
+        {this.props.children}
       </button>
     );
   }

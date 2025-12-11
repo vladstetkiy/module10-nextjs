@@ -1,4 +1,3 @@
-// TableChart.test.tsx
 import { render, screen } from '@testing-library/react';
 import TableChart from './TableChart';
 import { useTranslation } from 'react-i18next';

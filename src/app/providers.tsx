@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { useEffect } from 'react';
 import i18n from '@/app/i18next';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeStore } from '@/contexts/ThemeContext';
 import { NotificationProvider } from '@/contexts/NotificationContext/NotificationContext';
 
 const queryClient = new QueryClient({
@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  useTheme();
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
   useEffect(() => {
     const updateHtmlLang = () => {
       document.documentElement.lang = i18n.language;
@@ -31,6 +31,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       i18n.off('languageChanged', updateHtmlLang);
     };
   }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.querySelector('.theme-wrapper')?.classList.remove('light-theme');
+    } else {
+      document.querySelector('.theme-wrapper')?.classList.add('light-theme');
+    }
+  }, [isDarkMode]);
 
   return (
     <div className="theme-wrapper">

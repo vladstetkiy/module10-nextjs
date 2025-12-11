@@ -38,12 +38,13 @@ function CreatePost() {
         <Avatar avatarSrc={currentUser.profileImage} className={styles.createPostAvatar} />
         <p>{t('whatsHappening')}</p>
         <Button
-          text={t('tellEveryone')}
           className={styles.createPostButton}
           onClick={() => {
             setIsCreatePostOpen((prev) => !prev);
           }}
-        />
+        >
+          {t('tellEveryone')}
+        </Button>
       </section>
       {isCreatePostOpen ? (
         <CreatePostForm

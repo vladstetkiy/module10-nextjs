@@ -8,12 +8,13 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import Button from '../Button/Button';
 
 function Header() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const allowedPathsForNav = ['/', '/profile-info-and-statistic'];
+  const allowedPathsForNav = ['/', '/profile/edit', '/profile/statistic'];
   const { personInfo, isAuth } = useAuth();
 
   useEffect(() => {
@@ -53,27 +54,25 @@ function Header() {
               {isAuth ? (
                 <>
                   {!isDrawerOpen ? (
-                    <Link href="/profile-info-and-statistic" className={styles.profileInfoLink}>
+                    <Link href="/profile/edit" className={styles.profileInfoLink}>
                       <Avatar avatarSrc={personInfo.profileImage} className={styles.headerAvatar} />
                       <p>{personInfo.firstName + ' ' + personInfo.secondName}</p>
                     </Link>
                   ) : (
                     <>
                       <Link
-                        href="/profile-info-and-statistic"
+                        href="/profile/edit"
                         className={styles.navLinkDrawer}
                         onClick={() => {
-                          localStorage.setItem('isProfileInfo', 'true');
                           return setIsDrawerOpen(false);
                         }}
                       >
                         {t('profileLink')}
                       </Link>
                       <Link
-                        href="/profile-info-and-statistic"
+                        href="/profile/statistic"
                         className={styles.navLinkDrawer}
                         onClick={() => {
-                          localStorage.setItem('isProfileInfo', 'false');
                           return setIsDrawerOpen(false);
                         }}
                       >
@@ -102,18 +101,19 @@ function Header() {
               )}
             </nav>
 
-            <button
+            <Button
               className={
                 isDrawerOpen
                   ? `${styles.headerMenuMobile} ${styles.visible}`
                   : styles.headerMenuMobile
               }
               onClick={handleBurgerClick}
+              isStyleDisabled={true}
             >
               <div className={styles.burgerLine}></div>
               <div className={styles.burgerLine}></div>
               <div className={styles.burgerLine}></div>
-            </button>
+            </Button>
           </>
         ) : null}
       </header>

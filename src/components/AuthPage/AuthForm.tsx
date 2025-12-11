@@ -156,12 +156,9 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
         </div>
       ) : null}
 
-      <Button
-        text={mode == 'signin' ? t('signIn') : t('signUp')}
-        className={styles.submitAuthButton}
-        type="submit"
-        data-testid="submit-button"
-      />
+      <Button className={styles.submitAuthButton} type="submit" data-testid="submit-button">
+        {mode == 'signin' ? t('signIn') : t('signUp')}
+      </Button>
 
       {mode == 'signin' ? (
         <>
