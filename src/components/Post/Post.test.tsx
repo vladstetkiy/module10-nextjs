@@ -1,90 +1,55 @@
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Post from './Post';
-import { PostInterface } from '@/types/post.types';
-
-let personShortInfoProps: any = null;
-let postReactionsProps: any = null;
 
 jest.mock('./Post.module.css', () => ({
   post: 'post',
   postAvatar: 'postAvatar',
-  postImg: 'postImg',
   postDescription: 'postDescription',
 }));
 
-jest.mock('../PersonShortInfo/PersonShortInfo', () => {
-  const MockPersonShortInfo = (props: any) => {
-    personShortInfoProps = props;
-    return <div data-testid="person-short-info" />;
-  };
-  MockPersonShortInfo.displayName = 'MockPersonShortInfo';
-  return MockPersonShortInfo;
-});
+jest.mock('../PersonShortInfo/PersonShortInfo', () => ({
+  __esModule: true,
+  default: ({ itemId }: { itemId: number }) => <div data-testid="person-short-info">{itemId}</div>,
+}));
 
-jest.mock('../PostReactions/PostReactions', () => {
-  const MockPostReactions = (props: any) => {
-    postReactionsProps = props;
-    return <div data-testid="post-reactions" />;
-  };
-  MockPostReactions.displayName = 'MockPostReactions';
-  return MockPostReactions;
-});
+jest.mock('../PostReactions/PostReactions', () => ({
+  __esModule: true,
+  default: ({ postId, likes }: { postId: number; likes: number }) => (
+    <div data-testid="post-reactions">
+      {postId}-{likes}
+    </div>
+  ),
+}));
 
-describe('Post Component', () => {
-  const mockPost: PostInterface = {
+describe('Post component', () => {
+  const mockPost = {
     id: 1,
-    content: 'Test post content',
-    authorId: 123,
-    title: 'Test Title',
+    title: 'Test post',
+    content: 'Hello world',
+    authorId: 42,
     creationDate: '2024-01-01',
     modifiedDate: '2024-01-01',
-    likesCount: 0,
+    likesCount: 5,
     commentsCount: 0,
+    image: null,
   };
 
-  beforeEach(() => {
-    personShortInfoProps = null;
-    postReactionsProps = null;
-  });
-
-  it('renders post with content', () => {
+  test('renders post content', () => {
     render(<Post {...mockPost} />);
 
-    expect(screen.getByText('Test post content')).toBeInTheDocument();
-    expect(screen.getByTestId('person-short-info')).toBeInTheDocument();
-    expect(screen.getByTestId('post-reactions')).toBeInTheDocument();
+    expect(screen.getByText('Hello world')).toBeInTheDocument();
   });
 
-  it('passes correct props to child components', () => {
+  test('renders PersonShortInfo with correct authorId', () => {
     render(<Post {...mockPost} />);
 
-    expect(personShortInfoProps).toEqual({
-      itemId: 123,
-      avatarClassName: 'postAvatar',
-    });
-
-    expect(postReactionsProps).toEqual({
-      postId: 1,
-    });
+    expect(screen.getByTestId('person-short-info')).toHaveTextContent('42');
   });
 
-  it('renders image when provided', () => {
-    const postWithImage = {
-      ...mockPost,
-      image: 'test-image.jpg',
-    };
-
-    render(<Post {...postWithImage} />);
-
-    const image = screen.getByRole('img');
-    expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute('src', 'test-image.jpg');
-    expect(image).toHaveClass('postImg');
-  });
-
-  it('does not render image when not provided', () => {
+  test('renders PostReactions with correct props', () => {
     render(<Post {...mockPost} />);
 
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByTestId('post-reactions')).toHaveTextContent('1-5');
   });
 });

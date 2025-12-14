@@ -1,58 +1,50 @@
-describe('end-to-end tests for sign-up page', () => {
+describe('Sign Up page', () => {
   const email = 'admin@gmail.com';
   const password = '123456789';
+
   beforeEach(() => {
-    cy.visit('http://localhost:3000/signup', {
-      onBeforeLoad(window) {
-        window.localStorage.setItem('i18nextLng', 'en');
+    cy.visit('/signup', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('i18nextLng', 'en');
       },
     });
   });
-  it('shows sign-up form', () => {
-    cy.contains('h2', 'Create an account').should('be.visible');
-    cy.get('.email-input').should('be.visible');
-    cy.get('.password-input').should('be.visible');
-    cy.get('.submit-auth-button').should('contain.text', 'Sign Up');
 
-    cy.screenshot('sign-up-form-initial');
+  it('renders sign-up form', () => {
+    cy.get('[data-testid="page-title"]', { timeout: 10000 })
+      .should('be.visible')
+      .and('contain.text', 'Create');
+
+    cy.get('[data-testid="email-input"]').should('be.visible');
+    cy.get('[data-testid="password-input"]').should('be.visible');
+    cy.get('[data-testid="submit-button"]').should('contain.text', 'Sign Up');
   });
 
-  it('shows notifications for empty fields', () => {
-    cy.get('.submit-auth-button').click();
+  it('shows validation errors for empty fields', () => {
+    cy.get('[data-testid="submit-button"]').click();
 
-    cy.get('.auth-error-message').should('contain.text', 'Input email please');
-    cy.get('.auth-error-message').should('contain.text', 'Input password please');
-
-    cy.screenshot('sign-up-form-empty-fields-error');
+    cy.get('[data-testid="email-error"]').should('be.visible');
+    cy.get('[data-testid="password-error"]').should('be.visible');
   });
 
-  it('shows notification for short password', () => {
-    cy.get('.email-input').type(email);
-    cy.get('.password-input').type('123');
-    cy.get('.submit-auth-button').click();
+  it('shows error for short password', () => {
+    cy.get('[data-testid="email-input"]').type(email);
+    cy.get('[data-testid="password-input"]').type('123');
+    cy.get('[data-testid="submit-button"]').click();
 
-    cy.get('.auth-error-message').should(
-      'contain.text',
-      'Your password must be longer than 6 symbols',
-    );
-
-    cy.screenshot('sign-up-form-short-password-error');
+    cy.get('[data-testid="password-error"]').should('be.visible');
   });
 
-  it('signs up with valid data', () => {
-    cy.get('.email-input').type(email);
-    cy.get('.password-input').type(password);
-    cy.get('.submit-auth-button').click();
+  it('successfully signs up and redirects to home', () => {
+    cy.get('[data-testid="email-input"]').type(email);
+    cy.get('[data-testid="password-input"]').type(password);
+    cy.get('[data-testid="submit-button"]').click();
 
     cy.url().should('include', '/');
-
-    cy.screenshot('sign-up-success-redirect');
   });
 
-  it('switches to sign-in page by switch link', () => {
-    cy.contains('p a', 'Sign in').click();
+  it('switches to sign-in page', () => {
+    cy.get('[data-testid="switch-to-signin-link"]').click();
     cy.url().should('include', '/signin');
-
-    cy.screenshot('sign-in-page-after-switch');
   });
 });

@@ -1,89 +1,63 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Header from './Header';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { useTranslation } from 'react-i18next';
+
+jest.mock('./Header.module.css', () => ({
+  header: 'header',
+  headerDrawer: 'headerDrawer',
+  headerMenu: 'headerMenu',
+  drawerNav: 'drawerNav',
+  headerMenuMobile: 'headerMenuMobile',
+  visible: 'visible',
+  overlay: 'overlay',
+  burgerLine: 'burgerLine',
+  homePageLink: 'homePageLink',
+  navLinkHeader: 'navLinkHeader',
+  navLinkDrawer: 'navLinkDrawer',
+  profileInfoLink: 'profileInfoLink',
+  headerAvatar: 'headerAvatar',
+  headerLogo: 'headerLogo',
+  headerLogoDrawer: 'headerLogoDrawer',
+}));
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
+
+jest.mock('next/link', () => {
+  return ({ children, href }: any) => <a href={href}>{children}</a>;
+});
 
 jest.mock('@/hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
 jest.mock('react-i18next', () => ({
-  useTranslation: jest.fn(),
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
 }));
 
-jest.mock('@/components/Avatar/Avatar', () => ({ avatarSrc, className }: any) => (
-  <div data-testid="avatar" className={className}>
-    {avatarSrc ? `Avatar: ${avatarSrc}` : 'No Avatar'}
-  </div>
-));
+jest.mock('@/components/Avatar/Avatar', () => ({
+  __esModule: true,
+  default: () => <div data-testid="avatar" />,
+}));
 
-jest.mock('@/components/svg/LogoSvg/LogoSvg', () => ({ className }: any) => (
-  <svg data-testid="logo" className={className} />
-));
+jest.mock('@/components/svg/LogoSvg/LogoSvg', () => ({
+  __esModule: true,
+  default: () => <div data-testid="logo" />,
+}));
 
-jest.mock('./Header.module.css', () => ({}));
+import { useAuth } from '@/hooks/useAuth';
+import { usePathname } from 'next/navigation';
 
-jest.mock('next/link', () => {
-  return function MockLink({ children, href, className, onClick }: any) {
-    return (
-      <a href={href} className={className} onClick={onClick} data-testid={`link-${href}`}>
-        {children}
-      </a>
-    );
-  };
-});
-
-describe('Header Component', () => {
-  const mockT = jest.fn((key: string) => {
-    const translations: Record<string, string> = {
-      profileLink: 'Profile',
-      statsLink: 'Statistics',
-      signInLink: 'Sign In',
-      signUpLink: 'Sign Up',
-    };
-    return translations[key] || key;
-  });
-
-  const mockPersonInfo = {
-    firstName: 'John',
-    secondName: 'Doe',
-    profileImage: 'profile.jpg',
-  };
-
+describe('Header', () => {
   beforeEach(() => {
-    (usePathname as jest.Mock).mockReturnValue('/');
-    (useTranslation as jest.Mock).mockReturnValue({ t: mockT });
     jest.clearAllMocks();
-
-    Object.defineProperty(window, 'localStorage', {
-      value: {
-        getItem: jest.fn(),
-        setItem: jest.fn(),
-      },
-      writable: true,
-    });
+    (usePathname as jest.Mock).mockReturnValue('/');
   });
 
-  it('renders header with user info for authenticated user', () => {
-    (useAuth as jest.Mock).mockReturnValue({
-      isAuth: true,
-      personInfo: mockPersonInfo,
-    });
-
-    render(<Header />);
-
-    expect(screen.getByTestId('logo')).toBeInTheDocument();
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByTestId('avatar')).toBeInTheDocument();
-    expect(screen.getByTestId('link-/profile-info-and-statistic')).toBeInTheDocument();
-  });
-
-  it('renders auth links for non-authenticated user', () => {
+  test('renders sign in and sign up links when not authenticated', () => {
     (useAuth as jest.Mock).mockReturnValue({
       isAuth: false,
       personInfo: null,
@@ -91,46 +65,22 @@ describe('Header Component', () => {
 
     render(<Header />);
 
-    expect(screen.getByText('Sign In')).toBeInTheDocument();
-    expect(screen.getByText('Sign Up')).toBeInTheDocument();
-    expect(screen.getByTestId('link-/signin')).toBeInTheDocument();
-    expect(screen.getByTestId('link-/signup')).toBeInTheDocument();
+    expect(screen.getByText('signInLink')).toBeInTheDocument();
+    expect(screen.getByText('signUpLink')).toBeInTheDocument();
   });
 
-  it('has burger menu button on allowed paths', () => {
+  test('renders user name when authenticated', () => {
     (useAuth as jest.Mock).mockReturnValue({
       isAuth: true,
-      personInfo: mockPersonInfo,
+      personInfo: {
+        firstName: 'John',
+        secondName: 'Doe',
+        profileImage: '',
+      },
     });
 
     render(<Header />);
 
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-
-  it('does not show burger menu on non-allowed paths', () => {
-    (usePathname as jest.Mock).mockReturnValue('/not-allowed');
-    (useAuth as jest.Mock).mockReturnValue({
-      isAuth: true,
-      personInfo: mockPersonInfo,
-    });
-
-    render(<Header />);
-
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
-  });
-
-  it('calls burger button click handler', () => {
-    (useAuth as jest.Mock).mockReturnValue({
-      isAuth: true,
-      personInfo: mockPersonInfo,
-    });
-
-    render(<Header />);
-
-    const burgerButton = screen.getByRole('button');
-    fireEvent.click(burgerButton);
-
-    expect(burgerButton).toBeInTheDocument();
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 });

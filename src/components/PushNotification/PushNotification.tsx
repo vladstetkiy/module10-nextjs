@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import CrossSvg from '../svg/CrossSvg/CrossSvg';
 import styles from './PushNotification.module.css';
+import Button from '../Button/Button';
 
 interface PushNotificationPropsInterface {
   message: string;
@@ -26,14 +27,15 @@ function PushNotification({ message, duration = 5000, onClose }: PushNotificatio
   return (
     <div className={styles.pushNotificationMessage}>
       <p>{message}</p>
-      <button
+      <Button
         onClick={() => {
           setIsVisible(false);
           setTimeout(onClose, 300);
         }}
+        isStyleDisabled={true}
       >
         <CrossSvg className={styles.pushNotificationCross} />
-      </button>
+      </Button>
     </div>
   );
 }

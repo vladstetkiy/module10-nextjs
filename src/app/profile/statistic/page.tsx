@@ -25,8 +25,8 @@ function Statistic() {
   }
 
   return (
-    <div className={styles.statistic}>
-      <div className={styles.metricCards}>
+    <div className={styles.statistic} data-testid="statistic-page">
+      <div className={styles.metricCards} data-testid="metric-cards">
         <MetricCard
           cardTitle={t('commentsStat')}
           cardValue={comments?.length}
@@ -47,21 +47,34 @@ function Statistic() {
         />
       </div>
 
-      <Toggle
-        visualMode="toggle"
-        isOn={false}
-        firstOption={isTableView ? '' : t('tableView')}
-        secondOption={isTableView ? t('chartView') : t('chartView')}
-        onToggle={onTableViewToggle}
-      />
-      <div className={styles.tableChartsContainer}>
-        <div className={styles.tableChartWrapper}>
+      <div data-testid="view-toggle-wrapper">
+        <Toggle
+          visualMode="toggle"
+          isOn={!isTableView}
+          firstOption={t('tableView')}
+          secondOption={t('chartView')}
+          onToggle={onTableViewToggle}
+          dataTestId="view-toggle"
+        />
+      </div>
+
+      <div className={styles.tableChartsContainer} data-testid="charts-container">
+        <div className={styles.tableChartWrapper} data-testid="likes-stat">
           <p>{t('likesStat')}</p>
-          <TableChart mode={isTableView ? 'table' : 'lineChart'} likes={likes} />
+          <TableChart
+            mode={isTableView ? 'table' : 'lineChart'}
+            likes={likes}
+            data-testid="likes-chart"
+          />
         </div>
-        <div className={styles.tableChartWrapper}>
+
+        <div className={styles.tableChartWrapper} data-testid="comments-stat">
           <p>{t('commentsStat')}</p>
-          <TableChart mode={isTableView ? 'table' : 'barChart'} comments={comments} />
+          <TableChart
+            mode={isTableView ? 'table' : 'barChart'}
+            comments={comments}
+            data-testid="comments-chart"
+          />
         </div>
       </div>
     </div>

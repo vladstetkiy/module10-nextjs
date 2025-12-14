@@ -15,6 +15,7 @@ interface TogglePropsInterface {
   secondOption?: string;
   className?: string;
   isOnSegment?: boolean;
+  dataTestId: string;
 }
 
 const MaterialSwitch = styled(Switch)(({ theme }) => ({
@@ -66,6 +67,7 @@ function Toggle({
   secondOption,
   className,
   isOnSegment,
+  dataTestId,
 }: TogglePropsInterface) {
   const [isOnState, setIsOnState] = useState(isOn);
 
@@ -78,7 +80,12 @@ function Toggle({
 
   if (visualMode === 'segment-control') {
     return (
-      <Button className={styles.segmentControl} onClick={handleClick} isStyleDisabled={true}>
+      <Button
+        className={styles.segmentControl}
+        onClick={handleClick}
+        isStyleDisabled={true}
+        data-testid={dataTestId}
+      >
         <div className={`${styles.firstOption} ${isOnSegment ? styles.toggleOn : ''}`}>
           {firstOption ? firstOption : ''}
         </div>

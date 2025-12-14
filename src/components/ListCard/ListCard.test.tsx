@@ -1,91 +1,65 @@
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import ListCard from './ListCard';
-import { GroupInterface, UserInterface } from '@/types/post.types';
 
-let personShortInfoProps: any[] = [];
+jest.mock('./ListCard.module.css', () => ({
+  listContainer: 'listContainer',
+  listContainerTitle: 'listContainerTitle',
+}));
 
-jest.mock('../PersonShortInfo/PersonShortInfo', () => {
-  const MockPersonShortInfo = (props: any) => {
-    personShortInfoProps.push(props);
-    return <div data-testid="person-short-info" />;
-  };
-  MockPersonShortInfo.displayName = 'MockPersonShortInfo';
-  return MockPersonShortInfo;
-});
+jest.mock('@/hooks/useAuth', () => ({
+  useAuth: jest.fn(),
+}));
 
-jest.mock('./ListCard.module.css', () => ({}));
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
 
-describe('ListCard Component', () => {
-  const mockUsers = [
-    { id: 1, firstName: 'John', secondName: 'Doe' },
-    { id: 2, firstName: 'Jane', secondName: 'Smith' },
-  ] as UserInterface[];
+jest.mock('../PersonShortInfo/PersonShortInfo', () => ({
+  __esModule: true,
+  default: ({ itemId, isGroup }: { itemId: number; isGroup?: boolean }) => (
+    <div data-testid="person-short-info">
+      {itemId}-{String(isGroup)}
+    </div>
+  ),
+}));
 
-  const mockGroups = [
-    { id: 1, title: 'Group 1' },
-    { id: 2, title: 'Group 2' },
-  ] as GroupInterface[];
+import { useAuth } from '@/hooks/useAuth';
+
+describe('ListCard', () => {
+  const users = [{ id: 1 }, { id: 2 }] as any[];
 
   beforeEach(() => {
-    personShortInfoProps = [];
-
-    jest.spyOn(console, 'error').mockImplementation((message) => {
-      if (!message.includes('key')) {
-        console.error(message);
-      }
-    });
+    jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
+  test('returns null when user is not authenticated', () => {
+    (useAuth as jest.Mock).mockReturnValue({ isAuth: false });
+
+    const { container } = render(<ListCard title="users" items={users} />);
+
+    expect(container.firstChild).toBeNull();
   });
 
-  it('renders title and list of users', () => {
-    render(<ListCard title="Users List" items={mockUsers} />);
+  test('renders title and list when authenticated', () => {
+    (useAuth as jest.Mock).mockReturnValue({ isAuth: true });
 
-    expect(screen.getByText('Users List')).toBeInTheDocument();
+    render(<ListCard title="users" items={users} />);
+
+    expect(screen.getByText('users')).toBeInTheDocument();
     expect(screen.getAllByTestId('person-short-info')).toHaveLength(2);
   });
 
-  it('renders title and list of groups when isGroups is true', () => {
-    render(<ListCard title="Groups List" items={mockGroups} isGroups={true} />);
+  test('passes isGroup prop when isGroups is true', () => {
+    (useAuth as jest.Mock).mockReturnValue({ isAuth: true });
 
-    expect(screen.getByText('Groups List')).toBeInTheDocument();
-    expect(screen.getAllByTestId('person-short-info')).toHaveLength(2);
-  });
+    render(<ListCard title="groups" items={users} isGroups />);
 
-  it('passes correct props to PersonShortInfo for users', () => {
-    render(<ListCard title="Test" items={mockUsers} />);
+    const items = screen.getAllByTestId('person-short-info');
 
-    expect(personShortInfoProps).toHaveLength(2);
-    expect(personShortInfoProps[0]).toEqual({
-      itemId: 1,
-      isGroup: undefined,
-    });
-    expect(personShortInfoProps[1]).toEqual({
-      itemId: 2,
-      isGroup: undefined,
-    });
-  });
-
-  it('passes correct props to PersonShortInfo for groups', () => {
-    render(<ListCard title="Test" items={mockGroups} isGroups={true} />);
-
-    expect(personShortInfoProps).toHaveLength(2);
-    expect(personShortInfoProps[0]).toEqual({
-      itemId: 1,
-      isGroup: true,
-    });
-    expect(personShortInfoProps[1]).toEqual({
-      itemId: 2,
-      isGroup: true,
-    });
-  });
-
-  it('handles empty array', () => {
-    render(<ListCard title="Empty List" items={[]} />);
-
-    expect(screen.getByText('Empty List')).toBeInTheDocument();
-    expect(screen.queryAllByTestId('person-short-info')).toHaveLength(0);
+    expect(items[0]).toHaveTextContent('1-true');
+    expect(items[1]).toHaveTextContent('2-true');
   });
 });

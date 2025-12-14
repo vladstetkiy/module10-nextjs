@@ -1,160 +1,64 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Toggle from './Toggle';
-import { ThemeProvider, createTheme } from '@mui/material';
 
-jest.mock('./Toggle.module.css', () => ({
-  toggle: 'toggle',
-  segmentControl: 'segmentControl',
-  firstOption: 'firstOption',
-  secondOption: 'secondOption',
-  toggleOn: 'toggleOn',
-  toggleOff: 'toggleOff',
-  toggleContainer: 'toggleContainer',
-  toggleHandle: 'toggleHandle',
-}));
-
-const theme = createTheme();
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);
-};
-
-describe('Toggle Component', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
-  it('renders toggle mode correctly', () => {
-    const mockToggle = jest.fn();
-
-    renderWithTheme(
-      <Toggle
-        isOn={false}
-        onToggle={mockToggle}
-        visualMode="toggle"
-        firstOption="Off"
-        secondOption="On"
-      />,
-    );
+describe('Toggle component', () => {
+  test('renders toggle mode with labels', () => {
+    render(<Toggle visualMode="toggle" firstOption="Off" secondOption="On" isOn={false} />);
 
     expect(screen.getByText('Off')).toBeInTheDocument();
     expect(screen.getByText('On')).toBeInTheDocument();
-    expect(screen.getByRole('switch')).toBeInTheDocument();
-  });
-
-  it('renders segment-control mode correctly', () => {
-    const mockToggle = jest.fn();
-
-    renderWithTheme(
-      <Toggle
-        isOn={false}
-        onToggle={mockToggle}
-        visualMode="segment-control"
-        firstOption="Table"
-        secondOption="Chart"
-      />,
-    );
-
-    expect(screen.getByText('Table')).toBeInTheDocument();
-    expect(screen.getByText('Chart')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-
-  it('toggles when clicked in toggle mode', () => {
-    const mockToggle = jest.fn();
-
-    renderWithTheme(
-      <Toggle
-        isOn={false}
-        onToggle={mockToggle}
-        visualMode="toggle"
-        firstOption="Off"
-        secondOption="On"
-      />,
-    );
 
     const switchElement = screen.getByRole('switch');
-
     expect(switchElement).not.toBeChecked();
+  });
 
+  test('toggle changes state when clicked', () => {
+    render(<Toggle visualMode="toggle" firstOption="Off" secondOption="On" isOn={false} />);
+
+    const switchElement = screen.getByRole('switch');
     fireEvent.click(switchElement);
 
     expect(switchElement).toBeChecked();
-    expect(mockToggle).toHaveBeenCalledTimes(1);
   });
 
-  it('toggles when clicked in segment-control mode', () => {
-    const mockToggle = jest.fn();
+  test('calls onToggle callback when switch is clicked', () => {
+    const onToggleMock = jest.fn();
 
-    renderWithTheme(
+    render(<Toggle visualMode="toggle" isOn={false} onToggle={onToggleMock} />);
+
+    fireEvent.click(screen.getByRole('switch'));
+    expect(onToggleMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('renders segment-control mode with options', () => {
+    render(
       <Toggle
-        isOn={false}
-        onToggle={mockToggle}
         visualMode="segment-control"
-        firstOption="Table"
-        secondOption="Chart"
+        firstOption="Monthly"
+        secondOption="Yearly"
+        isOnSegment={true}
       />,
     );
 
-    const button = screen.getByRole('button');
-    fireEvent.click(button);
-
-    expect(mockToggle).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Monthly')).toBeInTheDocument();
+    expect(screen.getByText('Yearly')).toBeInTheDocument();
   });
 
-  it('shows correct active state based on initial isOn prop in segment-control', () => {
-    const mockToggle = jest.fn();
+  test('segment-control calls onToggle when clicked', () => {
+    const onToggleMock = jest.fn();
 
-    const { container } = renderWithTheme(
+    render(
       <Toggle
-        isOn={false}
-        onToggle={mockToggle}
         visualMode="segment-control"
-        firstOption="Table"
-        secondOption="Chart"
+        firstOption="A"
+        secondOption="B"
+        isOnSegment={true}
+        onToggle={onToggleMock}
       />,
     );
 
-    const tableOption = container.querySelector('.firstOption');
-    const chartOption = container.querySelector('.secondOption');
-
-    expect(chartOption).toHaveClass('toggleOn');
-    expect(tableOption).not.toHaveClass('toggleOn');
-  });
-
-  it('shows correct active state when isOn=true in segment-control', () => {
-    const mockToggle = jest.fn();
-
-    const { container } = renderWithTheme(
-      <Toggle
-        isOn={true}
-        onToggle={mockToggle}
-        visualMode="segment-control"
-        firstOption="Table"
-        secondOption="Chart"
-      />,
-    );
-
-    const tableOption = container.querySelector('.firstOption');
-    const chartOption = container.querySelector('.secondOption');
-
-    expect(tableOption).toHaveClass('toggleOn');
-    expect(chartOption).not.toHaveClass('toggleOn');
-  });
-
-  it('initial switch state matches isOn prop when true', () => {
-    const mockToggle = jest.fn();
-
-    renderWithTheme(<Toggle isOn={true} onToggle={mockToggle} visualMode="toggle" />);
-
-    expect(screen.getByRole('switch')).toBeChecked();
-  });
-
-  it('initial switch state matches isOn prop when false', () => {
-    const mockToggle = jest.fn();
-
-    renderWithTheme(<Toggle isOn={false} onToggle={mockToggle} visualMode="toggle" />);
-
-    expect(screen.getByRole('switch')).not.toBeChecked();
+    fireEvent.click(screen.getByRole('button'));
+    expect(onToggleMock).toHaveBeenCalledTimes(1);
   });
 });

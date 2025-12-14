@@ -10,6 +10,7 @@ interface PropsInterface {
   disabled?: boolean;
   isStyleDisabled?: boolean;
   children?: ReactNode;
+  'data-testid'?: string;
 }
 
 class Button extends React.Component<PropsInterface> {
@@ -25,6 +26,7 @@ class Button extends React.Component<PropsInterface> {
         className={`${orangeButtonStyle} ${this.props.className}`}
         onClick={this.props.onClick}
         disabled={this.props.disabled}
+        data-testid={this.props['data-testid']}
       >
         {this.props.children}
       </button>

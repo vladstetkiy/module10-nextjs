@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "cy:run": "npx cypress run",
     "test": "jest",
-    "test:e2e": "start-server-and-test dev http://localhost:3000 cy:run"
+    "test:e2e": "start-server-and-test dev http://localhost:3000 cy:run",
+    "ci": "npm run format && npm run lint && npm run test && npm run test:e2e"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

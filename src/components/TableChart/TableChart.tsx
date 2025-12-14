@@ -19,6 +19,7 @@ interface TableChartPropsInterface {
   mode: tableChardMode;
   comments?: CommentInterface[];
   likes?: LikeInterface[];
+  dataTestId?: string;
 }
 
 interface TableDataInterface {
@@ -27,7 +28,7 @@ interface TableDataInterface {
   col3: string | number;
 }
 
-function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterface) {
+function TableChart({ mode, comments = [], likes = [], dataTestId }: TableChartPropsInterface) {
   const { t, i18n } = useTranslation();
 
   const formatDate = (dateString: string): string => {
@@ -87,7 +88,7 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
   }
 
   return (
-    <div className={styles.tableChartWrapper}>
+    <div className={styles.tableChartWrapper} data-testid={dataTestId}>
       <div className={styles.tableContainer}>
         <h3 className={styles.tableTitle}>
           {mode === 'lineChart'
@@ -110,21 +111,21 @@ function TableChart({ mode, comments = [], likes = [] }: TableChartPropsInterfac
             <div className={styles.tableBody}>
               {likes.length > 0
                 ? tableDataLikes.map((item, index) => (
-                  <div key={index} className={styles.tableRow}>
-                    <div className={styles.dataCeil}>{item.row}</div>
-                    <div className={`${styles.dataCell} ${styles.secondColumn}`}>{item.col2}</div>
-                    <div className={styles.dataCell}>{item.col3}</div>
-                  </div>
-                ))
+                    <div key={index} className={styles.tableRow}>
+                      <div className={styles.dataCeil}>{item.row}</div>
+                      <div className={`${styles.dataCell} ${styles.secondColumn}`}>{item.col2}</div>
+                      <div className={styles.dataCell}>{item.col3}</div>
+                    </div>
+                  ))
                 : null}
               {comments.length > 0
                 ? tableDataComments.map((item, index) => (
-                  <div key={index} className={styles.tableRow}>
-                    <div className={styles.dataCeil}>{item.row}</div>
-                    <div className={`${styles.dataCell} ${styles.secondColumn}`}>{item.col2}</div>
-                    <div className={styles.dataCell}>{item.col3}</div>
-                  </div>
-                ))
+                    <div key={index} className={styles.tableRow}>
+                      <div className={styles.dataCeil}>{item.row}</div>
+                      <div className={`${styles.dataCell} ${styles.secondColumn}`}>{item.col2}</div>
+                      <div className={styles.dataCell}>{item.col3}</div>
+                    </div>
+                  ))
                 : null}
             </div>
           </>

@@ -1,23 +1,22 @@
-describe('ProfileInfoAndStatisticPage', () => {
+describe('Profile statistic page', () => {
   beforeEach(() => {
-    cy.visit('/profile-info-and-statistic');
+    cy.visit('/profile/statistic', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('i18nextLng', 'en');
+      },
+    });
   });
 
-  it('should display the profile page by default', () => {
-    cy.get('.profile-info').should('exist');
+  it('opens statistic page', () => {
+    cy.url().should('include', '/profile/statistic');
+    cy.get('[data-testid="statistic-page"]').should('exist');
   });
 
-  it('should switch between tabs correctly', () => {
-    cy.get('.segment-control').click();
-    cy.get('.statistic').should('be.visible');
-    cy.get('.segment-control').click();
-    cy.get('.profile-info').should('exist');
-  });
+  it('stays on statistic page after reload', () => {
+    cy.url().should('include', '/profile/statistic');
 
-  it('should preserve state on page reload', () => {
-    cy.get('.segment-control').click();
-    cy.get('.statistic').should('be.visible');
     cy.reload();
-    cy.get('.statistic').should('be.visible');
+
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/profile/statistic');
   });
 });
