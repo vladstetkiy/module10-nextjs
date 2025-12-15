@@ -1,5 +1,6 @@
 import styles from './Avatar.module.css';
 import Image from 'next/image';
+import { IS_STATIC_EXPORT } from '@/utils/config';
 
 export interface AvatarPropsInterface {
   avatarSrc?: string;
@@ -9,7 +10,7 @@ export interface AvatarPropsInterface {
 function Avatar({ avatarSrc = '', className }: AvatarPropsInterface) {
   return (
     <Image
-      src={'/module10-nextjs/' + avatarSrc}
+      src={(IS_STATIC_EXPORT ? '/module10-nextjs/' : '') + avatarSrc}
       width={50}
       height={50}
       alt="a"

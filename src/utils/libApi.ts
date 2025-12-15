@@ -1,11 +1,12 @@
 import { PostInterface, UserInterface, GroupInterface, CommentInterface } from '@/types/post.types';
+import { IS_STATIC_EXPORT } from './config';
 
 const getBaseUrl = (): string => {
-  if (typeof window === 'undefined') {
+  if (!IS_STATIC_EXPORT) {
     return 'http://localhost:3000';
   }
 
-  if (window.location.hostname == 'vladstetkiy.github.io') {
+  if (IS_STATIC_EXPORT) {
     return 'https://vladstetkiy.github.io';
   }
 
