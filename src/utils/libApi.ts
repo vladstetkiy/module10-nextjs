@@ -1,6 +1,18 @@
 import { PostInterface, UserInterface, GroupInterface, CommentInterface } from '@/types/post.types';
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const getBaseUrl = (): string => {
+  if (typeof window === 'undefined') {
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  }
+
+  if (window.location.hostname === 'vladstetkiy.github.io') {
+    return 'https://vladstetkiy.github.io/module10-nextjs';
+  }
+
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+};
+
+const baseUrl = getBaseUrl();
 
 const getAuthToken = (): string | null => {
   if (typeof window === 'undefined') return null;
