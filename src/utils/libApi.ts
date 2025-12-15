@@ -5,8 +5,8 @@ const getBaseUrl = (): string => {
     return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   }
 
-  if (window.location.hostname === 'vladstetkiy.github.io') {
-    return 'https://vladstetkiy.github.io/module10-nextjs';
+  if (window.location.hostname == 'vladstetkiy.github.io') {
+    return 'https://vladstetkiy.github.io';
   }
 
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
