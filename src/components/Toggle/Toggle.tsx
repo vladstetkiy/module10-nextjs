@@ -15,7 +15,7 @@ interface TogglePropsInterface {
   secondOption?: string;
   className?: string;
   isOnSegment?: boolean;
-  dataTestId: string;
+  dataTestId?: string;
 }
 
 const MaterialSwitch = styled(Switch)(({ theme }) => ({
