@@ -1,0 +1,11 @@
+:HL["/module10-nextjs/_next/static/chunks/8b886d59dc3d4fa5.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/c1eba8c3daf2723b.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/95995563c2839cd0.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/b856edb0b7f0f316.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/3a5e6e6294b90c85.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/c2c677f94e5be690.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/91ea842dd3c562d6.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/09291e798beae09a.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/cf98e51362f1bc91.css","style"]
+:HL["/module10-nextjs/_next/static/chunks/d0f9f596518c5523.css","style"]
+0:{"buildId":"rlObq2HiSBRHnSJgo7MkJ","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"profile","paramType":null,"paramKey":"profile","hasRuntimePrefetch":false,"slots":{"children":{"name":"edit","paramType":null,"paramKey":"edit","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
