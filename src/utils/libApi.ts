@@ -2,7 +2,7 @@ import { PostInterface, UserInterface, GroupInterface, CommentInterface } from '
 
 const getBaseUrl = (): string => {
   if (typeof window === 'undefined') {
-    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    return 'http://localhost:3000';
   }
 
   if (window.location.hostname == 'vladstetkiy.github.io') {

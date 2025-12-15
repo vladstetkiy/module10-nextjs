@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/Module10-nextjs',
+  basePath: '/module10-nextjs',
   images: { unoptimized: true },
 
   async rewrites() {
