@@ -9,7 +9,7 @@ export interface AvatarPropsInterface {
 function Avatar({ avatarSrc = '', className }: AvatarPropsInterface) {
   return (
     <Image
-      src={avatarSrc}
+      src={'/module10-nextjs/' + avatarSrc}
       width={50}
       height={50}
       alt="a"
