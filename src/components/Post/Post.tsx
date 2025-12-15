@@ -7,7 +7,7 @@ function Post({ id, content, image, authorId, likesCount }: PostInterface) {
   return (
     <section key={id} className={styles.post}>
       <PersonShortInfo itemId={authorId} avatarClassName={styles.postAvatar} />
-      {image ? <img src={image} className={styles.postImg}></img> : null}
+      {image ? <img src={'/module10-nextjs/' + image} className={styles.postImg}></img> : null}
 
       <div className={styles.postDescription}>
         <p>{content}</p>
