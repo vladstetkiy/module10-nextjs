@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
+  basePath: '/Module10-nextjs',
   images: { unoptimized: true },
 
   async rewrites() {
     return [
       {
-        source: '/Module10/mockServiceWorker.js',
+        source: '/Module10-nextjs/mockServiceWorker.js',
         destination: '/mockServiceWorker.js',
       },
     ];
