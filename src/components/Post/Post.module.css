@@ -80,6 +80,7 @@
     padding: 12px;
     border-left: 0;
     border-right: 0;
+    gap: 12px;
 
     .postImg {
       max-height: 150px;

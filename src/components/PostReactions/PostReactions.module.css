@@ -44,6 +44,10 @@
 }
 
 @media (max-width: 768px) {
+  .comments {
+    gap: 13.5px;
+  }
+
   .content {
     grid-template-columns: 1fr;
   }

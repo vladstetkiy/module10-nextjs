@@ -43,10 +43,15 @@
 @media (max-width: 1000px) {
   .metricCards {
     flex-wrap: wrap;
+    gap: 12px;
   }
 }
 
 @media (max-width: 768px) {
+  .statistic {
+    padding: 12px;
+  }
+
   .metricCards {
     justify-content: flex-start;
   }
@@ -57,4 +62,16 @@
     gap: 24px;
     margin-bottom: 200px;
   }
+
+  .tableChartWrapper {
+
+    gap: 12px;
+
+
+    p {
+      font-size: 18px;
+
+    }
+  }
+
 }

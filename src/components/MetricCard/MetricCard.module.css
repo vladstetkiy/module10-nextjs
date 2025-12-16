@@ -17,3 +17,25 @@
 .metricCardValueComment {
   color: var(--component-text-gray);
 }
+
+@media (max-width: 1000px) {
+  .metricCard {
+    height: 114px;
+    padding: 12px;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .metricCardValue {
+    font-weight: 600;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    font-size: 26px;
+  }
+
+  .metricCardTitle {
+    font-size: 18px;
+  }
+
+}

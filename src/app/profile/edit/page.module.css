@@ -34,10 +34,12 @@
 .emailInput {
   width: 327px;
   height: 48px;
+  max-width: 350px;
 }
 
 .descriptionInput {
   width: 575px;
+  max-width: 575px;
   min-height: 110px;
 }
 
@@ -78,6 +80,7 @@
 }
 
 @media (max-width: 850px) {
+
   .usernameInput,
   .emailInput {
     width: 100%;
@@ -86,6 +89,7 @@
 
   .editProfile {
     width: 100%;
+    gap: 12px
   }
 
   .profileInfo {
@@ -109,4 +113,10 @@
   .descriptionInput {
     width: 100%;
   }
+
+  .saveChangesButton {
+    width: 196px;
+    height: 36px;
+  }
+
 }

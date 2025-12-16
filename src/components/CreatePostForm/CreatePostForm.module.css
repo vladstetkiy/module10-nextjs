@@ -42,8 +42,14 @@
   width: 100%;
 }
 
+.usernameInput {
+  height: 48px;
+  max-width: 327px;
+}
+
 .uploadFileCreatePostSvg {
   max-width: 30px;
+  min-width: 30px;
   width: 100%;
   max-height: 36px;
   height: 100%;
@@ -53,6 +59,7 @@
   padding: 24px 0px 24px 32px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
   background-color: inherit;
   border: 2px var(--component-stroke-dark-soft) dashed;
@@ -92,6 +99,26 @@
 }
 
 @media (max-width: 768px) {
+  .createPostContainer {
+    width: calc(100% - 24px);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .createPostForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .dragAndDropCreatePostInput {
+    font-size: 10px;
+    padding: 8px 12px 8px 12px;
+    min-height: 68px;
+
+    text-align: center;
+  }
+
   .createPostFormTitle {
     font-size: 20px;
   }
@@ -103,6 +130,6 @@
 
   .createPostFormButton {
     width: 96px;
-    height: 36x;
+    height: 36px;
   }
 }

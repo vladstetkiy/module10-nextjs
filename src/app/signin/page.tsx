@@ -11,8 +11,8 @@ export default function SignIn() {
     <>
       <main className={styles.authPage} data-testid="auth-page">
         <div className={styles.formTitle}>
-          <h2 data-testid="page-title">
-            {t('signIn')} className={'.h2'}
+          <h2 className={'.h2'} data-testid="page-title">
+            {t('signIn')}
           </h2>
           <p data-testid="page-description">
             {t('enterEmailPassword') + ' ' + t('toSignIn') + ' ' + t('thisApp')}
