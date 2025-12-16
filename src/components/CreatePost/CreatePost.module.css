@@ -1,0 +1,96 @@
+.createPost {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--background-fill-surface);
+  width: 100%;
+  height: 88px;
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+  margin-bottom: 26px;
+  padding: 12px;
+
+  p {
+    margin-right: auto;
+    margin-left: 15px;
+  }
+
+
+}
+
+.createPostAvatar {
+  min-width: 64px;
+  min-height: 64px;
+}
+
+.createPostSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--background-fill-surface);
+  width: 100%;
+  height: 88px;
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+  margin-bottom: 26px;
+  padding: 12px;
+
+  .createPostAvatarSkeleton {
+    flex-shrink: 0;
+  }
+
+  .createPostTextSkeleton {
+    margin-right: auto;
+    margin-left: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .createPostSkeleton {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 0px;
+    padding: 12px;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+
+    .createPostAvatarSkeleton {
+      height: 32px !important;
+      width: 32px !important;
+    }
+
+    .createPostButtonSkeleton {
+      width: 140px !important;
+      height: 36px !important;
+    }
+  }
+}
+
+.createPostButton {
+  width: 188px;
+}
+
+@media (max-width: 768px) {
+  .createPost {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 0px;
+    padding: 12px;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .createPostButton {
+    width: 140px;
+    height: 36px;
+  }
+
+  .createPostAvatar {
+    max-height: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    min-width: 32px;
+  }
+}

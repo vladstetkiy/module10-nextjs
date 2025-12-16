@@ -1,0 +1,41 @@
+.metricCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: var(--background-fill-surface);
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+  width: 100%;
+}
+
+.metricCardValue {
+  font-weight: 600;
+  font-size: 40px;
+}
+
+.metricCardValueComment {
+  color: var(--component-text-gray);
+}
+
+@media (max-width: 1000px) {
+  .metricCard {
+    height: 114px;
+    padding: 12px;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .metricCardValue {
+    font-weight: 600;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    font-size: 26px;
+  }
+
+  .metricCardTitle {
+    font-size: 18px;
+  }
+
+}

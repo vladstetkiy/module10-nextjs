@@ -1,4 +1,4 @@
-import './CreatePostForm.css';
+import styles from './CreatePostForm.module.css';
 import Input from '../Input/Input';
 import CrossSvg from '../svg/CrossSvg/CrossSvg';
 import MailSvg from '../svg/MailSvg/MailSvg';
@@ -6,8 +6,10 @@ import PenSvg from '../svg/PenSvg/PenSvg';
 import UploadFileSvg from '../svg/UploadFileSvg/UploadFileSvg';
 import { useState, useRef } from 'react';
 import Button from '../Button/Button';
-import { showNotification } from '../../utils/ShowNotification';
+import { useNotification } from '@/contexts/NotificationContext/NotificationContext';
 import libApi from '@/utils/libApi';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 interface CreatePostFormInterface {
   closeFunc: () => void;
@@ -20,6 +22,8 @@ interface ErrorsInterface {
 }
 
 function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
+  const { t } = useTranslation();
+  const { showNotification } = useNotification();
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -29,6 +33,31 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     file: '',
   });
 
+  const queryClient = useQueryClient();
+
+  const createPostMutation = useMutation({
+    mutationFn: async (postData: { title: string; content: string; image: File | null }) => {
+      if (postData.image) {
+        const formData = new FormData();
+        formData.append('title', postData.title);
+        formData.append('content', postData.content);
+        formData.append('image', postData.image);
+
+        return libApi.post('/posts', formData);
+      } else {
+        return libApi.post('/posts', {
+          title: postData.title,
+          content: postData.content,
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+    onError: (error) => {
+      console.error('Failed to create Post:', error);
+    },
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTitleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,36 +94,36 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     let isValid = true;
 
     if (!newTitle.trim()) {
-      newErrors.title = 'Post title is required';
+      newErrors.title = t('inputPostTitle');
       isValid = false;
     } else if (newTitle.length < 3) {
-      newErrors.title = 'Title must be at least 3 characters long';
+      newErrors.title = t('inputPostTitle');
       isValid = false;
     } else if (newTitle.length > 100) {
-      newErrors.title = 'Title cannot exceed 100 characters';
+      newErrors.title = t('maxTitleLength');
       isValid = false;
     }
 
     if (!newDescription.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = t('inputPostDesc');
       isValid = false;
     } else if (newDescription.length < 10) {
-      newErrors.description = 'Description must be at least 10 characters long';
+      newErrors.description = t('inputPostDesc');
       isValid = false;
     } else if (newDescription.length > 500) {
-      newErrors.description = 'Description cannot exceed 500 characters';
+      newErrors.description = t('descSize');
       isValid = false;
     }
 
     if (selectedFile) {
       if (selectedFile.size > 10 * 1024 * 1024) {
-        newErrors.file = 'File size must be less than 10MB';
+        newErrors.file = t('fileSizeExceeded');
         isValid = false;
       }
 
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
       if (!allowedTypes.includes(selectedFile.type)) {
-        newErrors.file = 'Only JPG, PNG or PDF files are allowed';
+        newErrors.file = t('invalidFileType');
         isValid = false;
       }
     }
@@ -130,20 +159,18 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const validateResult = validateForm();
 
     if (validateResult) {
-      showNotification('Post has been created successfully', 5000);
-
-      libApi.post('/posts', {
+      await createPostMutation.mutateAsync({
         title: newTitle,
-        description: newDescription,
-        image: selectedFile,
+        content: newDescription,
+        image: null,
       });
-
+      showNotification(t('postCreated'), 5000);
       clearForm();
       closeFunc();
     }
@@ -151,46 +178,46 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
 
   return (
     <>
-      <section className="create-post-container">
-        <div className="create-post-form-header">
-          <h2 className="create-post-form-title">Create a new post</h2>
-          <button onClick={closeFunc}>
-            <CrossSvg className="create-post-form-cross" />
-          </button>
+      <section className={styles.createPostContainer}>
+        <div className={styles.createPostFormHeader}>
+          <h2 className={styles.createPostFormTitle}>{t('createNewPost')}</h2>
+          <Button onClick={closeFunc} isStyleDisabled={true}>
+            <CrossSvg className={styles.createPostFormCross} />
+          </Button>
         </div>
-        <form className="create-post-form" onSubmit={handleSubmit}>
+        <form className={styles.createPostForm} onSubmit={handleSubmit}>
           <Input
-            inputClassName="username-input"
-            placeholder="Enter post title"
+            inputClassName={styles.usernameInput}
+            placeholder={t('postTitlePlaceholder')}
             value={newTitle}
             onChange={handleTitleInputChange}
             svgIconComponent={<MailSvg />}
-            title="Post Title"
+            title={t('postTitle')}
           />
-          {errors.title ? <p className="create-post-error-message">{errors.title}</p> : null}
+          {errors.title ? <p className={styles.createPostErrorMessage}>{errors.title}</p> : null}
 
           <Input
-            inputClassName="description-input-form"
-            placeholder="Write description here..."
+            inputClassName={styles.descriptionInputForm}
+            placeholder={t('descriptionPlaceholder')}
             value={newDescription}
             onChange={handleDescriptionInputChange}
             svgIconComponent={<PenSvg />}
-            title="Description"
+            title={t('description')}
           />
           {errors.description ? (
-            <p className="create-post-error-message">{errors.description}</p>
+            <p className={styles.createPostErrorMessage}>{errors.description}</p>
           ) : null}
 
           <div
-            className="drag-and-drop-create-post-input"
+            className={styles.dragAndDropCreatePostInput}
             onClick={handleClick}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           >
-            <UploadFileSvg className="upload-file-create-post-svg" />
-            <div className="info-wrapper">
-              <p>Select a file or drag and drop here</p>
-              <p className="additional-info">JPG, PNG or PDF, file size no more than 10MB</p>
+            <UploadFileSvg className={styles.uploadFileCreatePostSvg} />
+            <div className={styles.infoWrapper}>
+              <p>{t('uploadFile')}</p>
+              <p className={styles.additionalInfo}>{t('fileTypes')}</p>
             </div>
 
             <input
@@ -201,12 +228,14 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
               style={{ display: 'none' }}
             />
           </div>
-          {errors.file ? <p className="create-post-error-message">{errors.file}</p> : null}
+          {errors.file ? <p className={styles.createPostErrorMessage}>{errors.file}</p> : null}
 
-          <Button text="Create" className="create-post-form-button" type="submit" />
+          <Button className={styles.createPostFormButton} type="submit">
+            {t('create')}
+          </Button>
         </form>
       </section>
-      <div className="create-post-overlay"></div>
+      <div className={styles.createPostOverlay}></div>
     </>
   );
 }

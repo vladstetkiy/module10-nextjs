@@ -1,0 +1,90 @@
+.post {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: var(--background-fill-surface);
+  width: 100%;
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+}
+
+.postSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: var(--background-fill-surface);
+  width: 100%;
+  border: var(--component-stroke-dark-soft) solid;
+  color: var(--component-text-dark);
+  margin-bottom: 16px;
+}
+
+.postSkeletonHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.postSkeletonAuthor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.postSkeletonImage {
+  border-radius: 8px;
+}
+
+.postSkeletonContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.postSkeletonReactions {
+  display: flex;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--component-stroke-dark-soft);
+}
+
+@media (max-width: 768px) {
+  .postSkeleton {
+    background-color: var(--background-fill-middle);
+    padding: 12px;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .postSkeletonImage {
+    max-height: 150px;
+  }
+
+  .postAvatar {
+    max-height: 48px;
+  }
+
+  @media (max-width: 1000px) {
+    .aside {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .post {
+    background-color: var(--background-fill-middle);
+    padding: 12px;
+    border-left: 0;
+    border-right: 0;
+    gap: 12px;
+
+    .postImg {
+      max-height: 150px;
+      object-fit: cover;
+    }
+  }
+}

@@ -1,42 +1,42 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import CrossSvg from '../svg/CrossSvg/CrossSvg';
-import './PushNotification.css';
+import styles from './PushNotification.module.css';
+import Button from '../Button/Button';
 
 interface PushNotificationPropsInterface {
   message: string;
   duration?: number;
+  onClose: () => void;
 }
 
-function PushNotification({ message, duration = 5000 }: PushNotificationPropsInterface) {
+function PushNotification({ message, duration = 5000, onClose }: PushNotificationPropsInterface) {
   const [isVisible, setIsVisible] = useState(true);
-  const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
-
-  const targetId = 'push-notification';
-  useEffect(() => {
-    const element = document.getElementById(targetId);
-    setTargetElement(element);
-  }, [targetId]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(false), duration);
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+      setTimeout(onClose, 300);
+    }, duration);
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, onClose]);
 
-  if (!isVisible || !targetElement) return null;
+  if (!isVisible) return null;
 
-  return createPortal(
-    <div className="push-notification-message">
+  return (
+    <div className={styles.pushNotificationMessage}>
       <p>{message}</p>
-      <button
+      <Button
         onClick={() => {
           setIsVisible(false);
+          setTimeout(onClose, 300);
         }}
+        isStyleDisabled={true}
       >
-        <CrossSvg className="push-notification-cross" />
-      </button>
-    </div>,
-    targetElement,
+        <CrossSvg className={styles.pushNotificationCross} />
+      </Button>
+    </div>
   );
 }
 

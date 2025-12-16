@@ -1,15 +1,21 @@
+'use client';
+
 import { useState } from 'react';
 import { Box, Switch, Typography, styled } from '@mui/material';
-import './Toggle.css';
+import styles from './Toggle.module.css';
+import Button from '../Button/Button';
 
 type visualModes = 'toggle' | 'segment-control';
 
 interface TogglePropsInterface {
-  isOn: boolean;
+  isOn?: boolean;
   onToggle?: () => void;
   visualMode: visualModes;
   firstOption?: string;
   secondOption?: string;
+  className?: string;
+  isOnSegment?: boolean;
+  dataTestId?: string;
 }
 
 const MaterialSwitch = styled(Switch)(({ theme }) => ({
@@ -53,7 +59,16 @@ const MaterialSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-function Toggle({ isOn, onToggle, visualMode, firstOption, secondOption }: TogglePropsInterface) {
+function Toggle({
+  isOn,
+  onToggle,
+  visualMode,
+  firstOption,
+  secondOption,
+  className,
+  isOnSegment,
+  dataTestId,
+}: TogglePropsInterface) {
   const [isOnState, setIsOnState] = useState(isOn);
 
   const handleClick = () => {
@@ -65,29 +80,34 @@ function Toggle({ isOn, onToggle, visualMode, firstOption, secondOption }: Toggl
 
   if (visualMode === 'segment-control') {
     return (
-      <button className="segment-control" onClick={handleClick}>
-        <div className={'first-option ' + `${isOnState ? 'toggle-on' : ''}`}>
+      <Button
+        className={styles.segmentControl}
+        onClick={handleClick}
+        isStyleDisabled={true}
+        data-testid={dataTestId}
+      >
+        <div className={`${styles.firstOption} ${isOnSegment ? styles.toggleOn : ''}`}>
           {firstOption ? firstOption : ''}
         </div>
-        <div className={'second-option ' + `${!isOnState ? 'toggle-on' : ''}`}>
+        <div className={`${styles.secondOption} ${!isOnSegment ? styles.toggleOn : ''}`}>
           {secondOption ? secondOption : ''}
         </div>
-      </button>
+      </Button>
     );
   }
 
   return (
-    <Box display="flex" alignItems="center" component="div" className="toggle">
+    <Box display="flex" alignItems="center" component="div" className={styles.toggle}>
       {firstOption && (
-        <Typography variant="body2" className="first-option" sx={{ mr: '12px' }}>
+        <Typography variant="body2" className={styles.firstOption} sx={{ mr: '12px' }}>
           {firstOption}
         </Typography>
       )}
 
-      <MaterialSwitch checked={isOnState} onChange={handleClick} />
+      <MaterialSwitch checked={isOnState} onChange={handleClick} className={className} />
 
       {secondOption && (
-        <Typography variant="body2" className="second-option" sx={{ ml: '12px' }}>
+        <Typography variant="body2" className={styles.secondOption} sx={{ ml: '12px' }}>
           {secondOption}
         </Typography>
       )}

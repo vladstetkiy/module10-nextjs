@@ -1,14 +1,16 @@
-import React from 'react';
-import './Button.css';
+import React, { ReactNode } from 'react';
+import styles from './Button.module.css';
 
 type buttonType = 'button' | 'submit' | 'reset' | undefined;
 
 interface PropsInterface {
-  text: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   type?: buttonType;
   disabled?: boolean;
+  isStyleDisabled?: boolean;
+  children?: ReactNode;
+  'data-testid'?: string;
 }
 
 class Button extends React.Component<PropsInterface> {
@@ -17,15 +19,16 @@ class Button extends React.Component<PropsInterface> {
   }
 
   render() {
-    const classNameCalculate = this.props.className ? this.props.className : '';
+    const orangeButtonStyle = !this.props.isStyleDisabled ? styles.orangeButton : '';
     return (
       <button
         type={this.props.type ? this.props.type : 'button'}
-        className={`${'orange-button ' + classNameCalculate}`}
+        className={`${orangeButtonStyle} ${this.props.className}`}
         onClick={this.props.onClick}
         disabled={this.props.disabled}
+        data-testid={this.props['data-testid']}
       >
-        <p>{this.props.text}</p>
+        {this.props.children}
       </button>
     );
   }

@@ -1,24 +1,25 @@
 'use client';
 
-import './Header.css';
+import styles from './Header.module.css';
 import Avatar from '@/components/Avatar/Avatar';
 import LogoSvg from '@/components/svg/LogoSvg/LogoSvg';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
+import Button from '../Button/Button';
 
 function Header() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const allowedPathsForNav = ['/', '/profile-info-and-statistic'];
-
-  const isAuth = localStorage.getItem('isAuth') == 'true';
-
-  const avatarExample = '/assets/AvatarExample.png';
+  const allowedPathsForNav = ['/', '/profile/edit', '/profile/statistic'];
+  const { personInfo, isAuth } = useAuth();
 
   useEffect(() => {
     function handleMobileClick(event: MouseEvent) {
-      const isDrawerClick = (event.target as Element)?.closest('.header-drawer');
+      const isDrawerClick = (event.target as Element)?.closest(`.${styles.headerDrawer}`);
 
       if (!isDrawerClick) {
         setIsDrawerOpen(false);
@@ -37,48 +38,45 @@ function Header() {
 
   return (
     <>
-      {' '}
-      <header className={isDrawerOpen ? ' header-drawer' : 'header'}>
-        <div className={isDrawerOpen ? 'header-drawer-top' : ''}>
-          <Link href="/" className="home-page-link" onClick={() => setIsDrawerOpen(false)}>
-            <LogoSvg className={isDrawerOpen ? 'header-logo-drawer' : 'header-logo'} />
+      <header className={isDrawerOpen ? styles.headerDrawer : styles.header}>
+        <div className={isDrawerOpen ? styles.headerDrawerTop : ''}>
+          <Link href="/" className={styles.homePageLink} onClick={() => setIsDrawerOpen(false)}>
+            <LogoSvg className={isDrawerOpen ? styles.headerLogoDrawer : styles.headerLogo} />
           </Link>
           {isDrawerOpen && isAuth ? (
-            <Avatar avatarSrc={avatarExample} className="header-avatar" />
+            <Avatar avatarSrc={personInfo.profileImage} className={styles.headerAvatar} />
           ) : null}
         </div>
 
         {allowedPathsForNav.includes(pathname) ? (
           <>
-            <nav className={isDrawerOpen ? 'drawer-nav' : 'header-menu'}>
+            <nav className={isDrawerOpen ? styles.drawerNav : styles.headerMenu}>
               {isAuth ? (
                 <>
                   {!isDrawerOpen ? (
-                    <Link href="/profile-info-and-statistic" className="profile-info-link">
-                      <Avatar avatarSrc={avatarExample} className="header-avatar" />
-                      <p>Name Surname</p>
+                    <Link href="/profile/edit" className={styles.profileInfoLink}>
+                      <Avatar avatarSrc={personInfo.profileImage} className={styles.headerAvatar} />
+                      <p>{personInfo.firstName + ' ' + personInfo.secondName}</p>
                     </Link>
                   ) : (
                     <>
                       <Link
-                        href="/profile-info-and-statistic"
-                        className="nav-link-drawer"
+                        href="/profile/edit"
+                        className={styles.navLinkDrawer}
                         onClick={() => {
-                          localStorage.setItem('isProfileInfo', 'true');
                           return setIsDrawerOpen(false);
                         }}
                       >
-                        Profile info
+                        {t('profileLink')}
                       </Link>
                       <Link
-                        href="/profile-info-and-statistic"
-                        className="nav-link-drawer"
+                        href="/profile/statistic"
+                        className={styles.navLinkDrawer}
                         onClick={() => {
-                          localStorage.setItem('isProfileInfo', 'false');
                           return setIsDrawerOpen(false);
                         }}
                       >
-                        Statistic
+                        {t('statsLink')}
                       </Link>
                     </>
                   )}
@@ -87,34 +85,39 @@ function Header() {
                 <>
                   <Link
                     href="/signin"
-                    className={!isDrawerOpen ? 'nav-link-header' : 'nav-link-drawer'}
+                    className={!isDrawerOpen ? styles.navLinkHeader : styles.navLinkDrawer}
                     onClick={() => setIsDrawerOpen(false)}
                   >
-                    Log In
+                    {t('signInLink')}
                   </Link>
                   <Link
                     href="/signup"
-                    className={!isDrawerOpen ? 'nav-link-header' : 'nav-link-drawer'}
+                    className={!isDrawerOpen ? styles.navLinkHeader : styles.navLinkDrawer}
                     onClick={() => setIsDrawerOpen(false)}
                   >
-                    Sign In
+                    {t('signUpLink')}
                   </Link>
                 </>
               )}
             </nav>
 
-            <button
-              className={isDrawerOpen ? 'header-menu-mobile visible ' : 'header-menu-mobile'}
+            <Button
+              className={
+                isDrawerOpen
+                  ? `${styles.headerMenuMobile} ${styles.visible}`
+                  : styles.headerMenuMobile
+              }
               onClick={handleBurgerClick}
+              isStyleDisabled={true}
             >
-              <div className="burger-line"></div>
-              <div className="burger-line"></div>
-              <div className="burger-line"></div>
-            </button>
+              <div className={styles.burgerLine}></div>
+              <div className={styles.burgerLine}></div>
+              <div className={styles.burgerLine}></div>
+            </Button>
           </>
         ) : null}
       </header>
-      {isDrawerOpen ? <div className="overlay"></div> : null}
+      {isDrawerOpen ? <div className={styles.overlay}></div> : null}
     </>
   );
 }

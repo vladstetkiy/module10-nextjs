@@ -1,10 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-
 import { persist } from 'zustand/middleware';
-
-import { useEffect } from 'react';
 
 interface ThemeStore {
   isDarkMode: boolean;
@@ -22,18 +19,3 @@ export const useThemeStore = create<ThemeStore>()(
     },
   ),
 );
-
-export const useTheme = () => {
-  const isDarkMode = useThemeStore((state) => state.isDarkMode);
-  const themeToggle = useThemeStore((state) => state.themeToggle);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.remove('light-theme');
-    } else {
-      document.body.classList.add('light-theme');
-    }
-  }, [isDarkMode]);
-
-  return { isDarkMode, themeToggle };
-};

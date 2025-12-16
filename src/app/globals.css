@@ -17,10 +17,18 @@ html {
 }
 
 body {
-  background-color: var(--background-fill-middle);
-  margin-top: 94px;
-  margin-bottom: 200px;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.theme-wrapper {
+  min-height: 100vh;
+  padding-top: 94px;
+  height: 100%;
+  background-color: var(--background-fill-middle);
   color: var(--component-text-dark);
 }
 
@@ -47,11 +55,8 @@ button {
   }
 }
 
-
 @media (max-width: 768px) {
-  body {
-    font-size: 12px;
-    margin-top: 40px;
-    margin-bottom: 100px;
+  .theme-wrapper {
+    padding-top: 40px;
   }
 }

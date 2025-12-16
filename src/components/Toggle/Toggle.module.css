@@ -1,0 +1,80 @@
+.toggle {
+  display: flex;
+  align-items: center;
+
+  .firstOption {
+    margin-right: 12px;
+  }
+
+  .secondOption {
+    margin-left: 12px;
+  }
+
+  .toggleContainer {
+    width: 48px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    background-color: var(--component-fill-dark-soft);
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    padding: 2px;
+  }
+
+  .toggleOff {
+    .toggleHandle {
+      background-color: var(--component-fill-light-fixed);
+    }
+  }
+
+  .toggleOn {
+    .toggleHandle {
+      background-color: var(--component-fill-positive);
+    }
+  }
+
+  .toggleHandle {
+    width: 20px;
+    height: 20px;
+    background-color: var(--component-fill-light-fixed);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .toggleOn .toggleHandle {
+    transform: translateX(20px);
+  }
+
+  .toggleOff .toggleHandle {
+    transform: translateX(2px);
+  }
+}
+
+.segmentControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--component-fill-dark-soft);
+  width: 211px;
+  height: 40px;
+
+  .firstOption,
+  .secondOption {
+    width: 101px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .segmentControl {
+    display: flex;
+    align-items: center;
+    background-color: var(--component-fill-dark-soft);
+    position: relative;
+  }
+
+  .toggleOn {
+    background-color: var(--component-fill-positive);
+  }
+}

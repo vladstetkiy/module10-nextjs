@@ -1,6 +1,7 @@
 'use client';
 
 import { PropsWithChildren, useEffect, useState } from 'react';
+import { IS_STATIC_EXPORT } from '@/utils/config';
 
 export const MockProvider = ({ children }: PropsWithChildren) => {
   const [mockingEnabled, enableMocking] = useState(false);
@@ -11,7 +12,11 @@ export const MockProvider = ({ children }: PropsWithChildren) => {
 
       if (shouldEnableMocking) {
         const { startMockingSocial } = await import('@sidekick-monorepo/internship-backend');
-        await startMockingSocial();
+        if (IS_STATIC_EXPORT) {
+          await startMockingSocial('/module10-nextjs');
+        } else {
+          await startMockingSocial();
+        }
 
         enableMocking(true);
       }

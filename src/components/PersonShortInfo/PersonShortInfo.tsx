@@ -1,11 +1,11 @@
 'use client';
 
-import './PersonShortInfo.css';
+import styles from './PersonShortInfo.module.css';
 import Avatar from '../Avatar/Avatar';
-import { useEffect, useState } from 'react';
-import type { GroupInterface, UserInterface } from '../../types/post.types.ts';
 import timeAgo from '@/utils/timeAgo';
-import libApi from '@/utils/libApi';
+import { useQuery } from '@tanstack/react-query';
+import { getMe, getUser, getGroup } from '@/utils/libApi';
+import { memo } from 'react';
 
 export interface PersonShortInfoPropsInterface {
   itemId?: number;
@@ -20,40 +20,43 @@ function PersonShortInfo({
   isMe,
   isGroup,
 }: PersonShortInfoPropsInterface) {
-  const [author, setAuthor] = useState<UserInterface | undefined>(undefined);
-  const [group, setGroup] = useState<GroupInterface | undefined>(undefined);
+  const { data: meData } = useQuery({
+    queryKey: ['me'],
+    queryFn: getMe,
+    enabled: !!isMe,
+  });
 
-  useEffect(() => {
-    libApi
-      .get(`${isMe ? `/me` : isGroup ? `/groups/${itemId}` : `/users/${itemId}`}`)
-      .then((data) => {
-        if (isGroup) {
-          setGroup(data);
-        } else {
-          setAuthor(data);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  const { data: userData } = useQuery({
+    queryKey: ['user', itemId],
+    queryFn: () => getUser(itemId!),
+    enabled: !!itemId && !isMe && !isGroup,
+  });
+
+  const { data: groupData } = useQuery({
+    queryKey: ['group', itemId],
+    queryFn: () => getGroup(itemId!),
+    enabled: !!itemId && !!isGroup,
+  });
+
+  const author = isMe ? meData : userData;
+  const group = groupData;
 
   return (
-    <div className="person">
+    <div className={styles.person}>
       <Avatar
         avatarSrc={isGroup ? group?.photo : author?.profileImage}
-        className={'person-short-avatar ' + avatarClassName}
+        className={`${styles.personShortAvatar} ${avatarClassName || ''}`.trim()}
       />
-      <div className="person-info">
+      <div className={styles.personInfo}>
         {isGroup ? (
           <>
-            <p className="person-name">{group?.title}</p>
-            <p className="person-online">{group?.membersCount + ' members'}</p>
+            <p className={styles.personName}>{group?.title}</p>
+            <p className={styles.personOnline}>{group?.membersCount + ' members'}</p>
           </>
         ) : (
           <>
-            <p className="person-name">{author?.firstName + ' ' + author?.secondName}</p>
-            <p className="person-online">{timeAgo(author?.creationDate)}</p>
+            <p className={styles.personName}>{author?.firstName + ' ' + author?.secondName}</p>
+            <p className={styles.personOnline}>{timeAgo(author?.creationDate)}</p>
           </>
         )}
       </div>
@@ -61,4 +64,4 @@ function PersonShortInfo({
   );
 }
 
-export default PersonShortInfo;
+export default memo(PersonShortInfo);

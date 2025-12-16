@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
-import './PostReactions.css';
+'use client';
+
+import { useState } from 'react';
+import styles from './PostReactions.module.css';
 import Button from '../Button/Button';
 import CommentSvg from '../svg/CommentSvg/CommentSvg';
 import LikeSvg from '../svg/LikeSvg/LikeSvg';
@@ -8,37 +10,43 @@ import PenSvg from '../svg/PenSvg/PenSvg';
 import Input from '../Input/Input';
 import { type CommentInterface, validateComment } from '../../types/post.types';
 import libApi from '@/utils/libApi';
+import { useTranslation } from 'react-i18next';
+import { getPostComments } from '@/utils/libApi';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 interface PostReactionsPropsInterface {
   postId: number;
+  likes: number;
 }
 
-function PostReactions({ postId }: PostReactionsPropsInterface) {
-  const [likes, setLikes] = useState(21);
-  const [comments, setComments] = useState<CommentInterface[] | undefined>(undefined);
+function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
+  const { t } = useTranslation();
+
   const [newComment, setNewComment] = useState('');
   const [isCommentsVisible, setIsCommentsVisible] = useState(true);
-
+  const [likesCount, setLikesCount] = useState(likes);
+  const queryClient = useQueryClient();
   const isAuth = localStorage.getItem('isAuth');
 
-  useEffect(() => {
-    libApi
-      .get(`/posts/${postId}/comments`)
-      .then((data) => {
-        return setComments(data.map((i: CommentInterface) => validateComment(i)));
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  const { data: comments } = useQuery({
+    queryKey: ['post-comments', postId],
+    queryFn: async () => {
+      const comments = await getPostComments(postId);
+      return comments.map((i: CommentInterface) => validateComment(i));
+    },
+  });
 
-  const handleLike = () => {
-    setLikes((prev) => prev + 1);
-    libApi.post('/like', {
-      postId: postId,
-    });
-    setNewComment('');
-  };
+  const { mutate: addComment } = useMutation({
+    mutationFn: (data: CommentInterface) => libApi.post('/comments', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['post-comments', postId],
+      });
+    },
+    onError: (error) => {
+      console.error('Failed to add comment', error);
+    },
+  });
 
   const handleAddComment = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -54,16 +62,13 @@ function PostReactions({ postId }: PostReactionsPropsInterface) {
       modifiedDate: new Date().toISOString(),
     };
 
-    setComments((prev) => {
-      if (prev) {
-        return [...prev, newCommentObj];
-      } else {
-        return [newCommentObj];
-      }
-    });
-    libApi.post('/comments', {
+    addComment(newCommentObj);
+  };
+
+  const handleLike = () => {
+    setLikesCount((prev) => prev + 1);
+    libApi.post('/like', {
       postId: postId,
-      text: newComment,
     });
     setNewComment('');
   };
@@ -77,51 +82,63 @@ function PostReactions({ postId }: PostReactionsPropsInterface) {
 
   return (
     <>
-      <div className="reactions-count">
-        <div className="likes">
-          <button onClick={handleLike}>
+      <div className={styles.reactionsCount}>
+        <div className={styles.likes}>
+          <Button onClick={handleLike} isStyleDisabled={true}>
             <LikeSvg />
-          </button>
+          </Button>
 
-          <p>{likes} likes</p>
+          <p>
+            {likesCount} {t('likesPlural2')}
+          </p>
         </div>
-        <div className="comments-count">
-          <button>
+        <div className={styles.commentsCount}>
+          <Button isStyleDisabled={true}>
             <CommentSvg />
-          </button>
+          </Button>
           {isAuth ? (
             <>
-              <p>{comments?.length} comments</p>
-              <button
+              <p>
+                {comments?.length || 0} {t('commentsPlural2')}
+              </p>
+              <Button
                 onClick={toggleCommentsVisibility}
-                className={isCommentsVisible ? 'comment-svg-visible' : 'comment-svg-invisible'}
+                className={
+                  isCommentsVisible ? styles.commentSvgVisible : styles.commentSvgInvisible
+                }
+                isStyleDisabled={true}
               >
                 <RowSvg />
-              </button>
+              </Button>
             </>
           ) : (
-            <p>You have to login to see the comments</p>
+            <p>{t('loginToSeeComments')}</p>
           )}
         </div>
       </div>
       {isCommentsVisible && isAuth ? (
         <>
-          {' '}
-          <div className="comments">
-            {comments?.map((comment, index) => (
-              <p key={index}>{`#${index + 1}. ` + comment.text}</p>
-            ))}
+          <div className={styles.comments}>
+            {comments ? (
+              comments.map((comment, index) => (
+                <p key={index}>{`#${index + 1}. ` + comment.text}</p>
+              ))
+            ) : (
+              <p>{t('loadingComments')}</p>
+            )}
           </div>
           <Input
-            wrapperClassName="comment-input-wrapper"
-            inputClassName="comment-input"
-            placeholder="Write description here"
+            wrapperClassName={styles.commentInputWrapper}
+            inputClassName={styles.commentInput}
+            placeholder={t('commentPlaceholder')}
             value={newComment}
             onChange={handleICommentInputChange}
             svgIconComponent={<PenSvg />}
-            title="Add a comment"
+            title={t('addComment')}
           />
-          <Button text="Add a comment" onClick={handleAddComment} className="add-comment-button" />
+          <Button onClick={handleAddComment} className={styles.addCommentButton}>
+            {t('addComment')}
+          </Button>
         </>
       ) : null}
     </>

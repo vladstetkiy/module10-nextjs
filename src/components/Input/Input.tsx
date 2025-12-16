@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { memo } from 'react';
 import './input.css';
 import InfoSvg from '../svg/InfoSvg/InfoSvg';
 
@@ -13,6 +14,7 @@ interface InputPropsInterface {
   additionalInfo?: string;
   type?: string;
   onBlur?: () => void;
+  dataTestId?: string;
 }
 
 function Input({
@@ -26,6 +28,7 @@ function Input({
   additionalInfo,
   type,
   onBlur,
+  dataTestId,
 }: InputPropsInterface) {
   return (
     <div className={'input-wrapper ' + wrapperClassName}>
@@ -41,6 +44,7 @@ function Input({
           onChange={onChange}
           type={type}
           onBlur={onBlur}
+          data-testid={dataTestId}
         />
         {additionalInfo ? (
           <div className="additional-info-wrapper">
@@ -54,4 +58,4 @@ function Input({
   );
 }
 
-export default Input;
+export default memo(Input);

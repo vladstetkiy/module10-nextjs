@@ -1,0 +1,12 @@
+.notificationPortalWrapper {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+}
+
+@media (max-width: 768px) {
+  .notificationPortalWrapper {
+    top: 50px;
+    right: 10px;
+  }
+}
