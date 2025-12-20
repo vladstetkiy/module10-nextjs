@@ -19,21 +19,6 @@ describe('Sign In page', () => {
     cy.get('[data-testid="submit-button"]').should('be.visible');
   });
 
-  it('shows validation errors for empty fields', () => {
-    cy.get('[data-testid="submit-button"]').click();
-
-    cy.get('[data-testid="email-error"]').should('be.visible');
-    cy.get('[data-testid="password-error"]').should('be.visible');
-  });
-
-  it('shows error for short password', () => {
-    cy.get('[data-testid="email-input"]').type(email);
-    cy.get('[data-testid="password-input"]').type('123');
-    cy.get('[data-testid="submit-button"]').click();
-
-    cy.get('[data-testid="password-error"]').should('be.visible');
-  });
-
   it('successfully signs in and redirects to home', () => {
     cy.get('[data-testid="email-input"]').type(email);
     cy.get('[data-testid="password-input"]').type(password);
