@@ -3,7 +3,7 @@ describe('Sign In page', () => {
   const password = 'password789';
 
   beforeEach(() => {
-    cy.visit('/signin', {
+    cy.visit('/sign-in', {
       onBeforeLoad(win) {
         win.localStorage.setItem('i18nextLng', 'en');
       },

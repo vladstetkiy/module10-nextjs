@@ -6,12 +6,15 @@ import timeAgo from '@/utils/timeAgo';
 import { useQuery } from '@tanstack/react-query';
 import { getMe, getUser, getGroup } from '@/utils/libApi';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface PersonShortInfoPropsInterface {
   itemId?: number;
   avatarClassName?: string;
   isMe?: boolean;
   isGroup?: boolean;
+  descriptionText?: string;
+  onClick?: () => void;
 }
 
 function PersonShortInfo({
@@ -19,7 +22,16 @@ function PersonShortInfo({
   avatarClassName,
   isMe,
   isGroup,
+  descriptionText,
+  onClick,
 }: PersonShortInfoPropsInterface) {
+  const { i18n } = useTranslation();
+  let language: 'ru' | 'en';
+  if (i18n.language == 'ru') {
+    language = 'ru';
+  } else {
+    language = 'en';
+  }
   const { data: meData } = useQuery({
     queryKey: ['me'],
     queryFn: getMe,
@@ -42,7 +54,7 @@ function PersonShortInfo({
   const group = groupData;
 
   return (
-    <div className={styles.person}>
+    <div className={styles.person} onClick={onClick}>
       <Avatar
         avatarSrc={isGroup ? group?.photo : author?.profileImage}
         className={`${styles.personShortAvatar} ${avatarClassName || ''}`.trim()}
@@ -56,7 +68,9 @@ function PersonShortInfo({
         ) : (
           <>
             <p className={styles.personName}>{author?.firstName + ' ' + author?.secondName}</p>
-            <p className={styles.personOnline}>{timeAgo(author?.creationDate)}</p>
+            <p className={styles.personOnline}>
+              {descriptionText ? descriptionText : timeAgo(author?.creationDate, language)}
+            </p>
           </>
         )}
       </div>

@@ -9,7 +9,7 @@ import i18n from '@/app/i18next';
 import { useThemeStore } from '@/contexts/ThemeContext';
 import { NotificationProvider } from '@/contexts/NotificationContext/NotificationContext';
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000,

@@ -44,6 +44,7 @@
 
 .usernameInput {
   height: 48px;
+  width: 100%;
   max-width: 327px;
 }
 
@@ -59,8 +60,7 @@
   padding: 24px 0px 24px 32px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 27px;
   background-color: inherit;
   border: 2px var(--component-stroke-dark-soft) dashed;
   width: 100%;
@@ -96,6 +96,15 @@
 
 .createPostErrorMessage {
   color: red;
+}
+
+.filePreview {
+  width: 100%;
+  max-width: 150px;
+  height: 100;
+  object-fit: cover;
+  border: 2px var(--component-stroke-dark-soft) dashed;
+  border-radius: 5px;
 }
 
 @media (max-width: 768px) {

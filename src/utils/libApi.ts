@@ -21,22 +21,33 @@ const getAuthToken = (): string | null => {
 };
 
 const libApi = {
-  async get(endpoint: string) {
+  async get(endpoint: string, requiresAuth: boolean = true) {
     const token = getAuthToken();
+
+    if (requiresAuth && !token) {
+      return null;
+    }
+
     const response = await fetch(`${baseUrl}/api${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
+
     if (!response.ok) {
       throw new Error(`GET ${endpoint} failed`);
     }
     return response.json();
   },
 
-  async post(endpoint: string, body: unknown) {
+  async post(endpoint: string, body: unknown, requiresAuth: boolean = true) {
     const token = getAuthToken();
+
+    if (requiresAuth && !token) {
+      return null;
+    }
+
     const response = await fetch(`${baseUrl}/api${endpoint}`, {
       method: 'POST',
       headers: {
@@ -51,10 +62,43 @@ const libApi = {
     }
     return response.json();
   },
+
+  async delete(endpoint: string, requiresAuth: boolean = true, body?: unknown) {
+    const token = getAuthToken();
+
+    if (requiresAuth && !token) {
+      throw new Error(`Authentication required for DELETE ${endpoint}`);
+    }
+
+    const config: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    };
+
+    if (body !== undefined) {
+      config.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(`${baseUrl}/api${endpoint}`, config);
+
+    if (!response.ok) {
+      throw new Error(`DELETE ${endpoint} failed`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+
+    return response.status === 204 ? true : response.text();
+  },
 };
 
 async function getPosts() {
-  const posts = await libApi.get('/posts');
+  const posts = await libApi.get('/posts', false);
   return posts as PostInterface[];
 }
 
@@ -74,7 +118,7 @@ async function getMe() {
 }
 
 async function getUser(id: number) {
-  const response = await libApi.get(`/users/${id}`);
+  const response = await libApi.get(`/users/${id}`, false);
   return response as UserInterface;
 }
 
@@ -86,6 +130,11 @@ async function getGroup(id: number) {
 async function getPostComments(id: number) {
   const response = await libApi.get(`/posts/${id}/comments`);
   return response as CommentInterface[];
+}
+
+async function testAuth() {
+  const me = await libApi.get('/me');
+  return me.ok;
 }
 
 async function getStatistic() {
@@ -108,4 +157,5 @@ export {
   getUser,
   getGroup,
   getPostComments,
+  testAuth,
 };

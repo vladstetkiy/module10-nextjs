@@ -3,10 +3,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import libApi from '@/utils/libApi';
 import { type UserInterface, validateUser } from '@/types/post.types';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthState {
   personInfo: UserInterface | null;
   isAuth: boolean;
+}
+
+interface JwtPayloadWithExp {
+  exp: number;
+  iat: number;
+  userId: number;
 }
 
 const initialState: AuthState = {
@@ -21,8 +28,17 @@ const initialState: AuthState = {
   })(),
   isAuth: (() => {
     if (typeof window !== 'undefined') {
-      const storedAuth = localStorage.getItem('isAuth');
-      return storedAuth ? !!JSON.parse(storedAuth) : false;
+      try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          return false;
+        }
+        const decodedToken = jwtDecode<JwtPayloadWithExp>(authToken);
+        const currentTime = Math.floor(Date.now() / 1000);
+        return decodedToken.exp > currentTime;
+      } catch {
+        return false;
+      }
     }
     return false;
   })(),
@@ -32,10 +48,15 @@ export const logInUser = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {
     try {
-      return await libApi.post('/login', {
-        email: email.trim().toLowerCase(),
-        password: password,
-      });
+      const response = await libApi.post(
+        '/login',
+        {
+          email: email.trim().toLowerCase(),
+          password: password,
+        },
+        false,
+      );
+      return response;
     } catch (error) {
       console.error('Error:', error);
       throw error;
@@ -44,13 +65,17 @@ export const logInUser = createAsyncThunk(
 );
 
 export const logUpUser = createAsyncThunk(
-  'auth/signup',
+  'auth/sign-up',
   async ({ email, password }: { email: string; password: string }) => {
     try {
-      return await libApi.post('/signup', {
-        email: email.trim().toLowerCase(),
-        password: password,
-      });
+      return await libApi.post(
+        '/sign-up',
+        {
+          email: email.trim().toLowerCase(),
+          password: password,
+        },
+        false,
+      );
     } catch (error) {
       console.error('Error:', error);
       throw error;

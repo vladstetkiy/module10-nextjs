@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './AuthForm.module.css';
-import { useState, type FormEvent } from 'react';
+import { type FormEvent } from 'react';
 import { useFormik } from 'formik';
 import Input from '../Input/Input';
 import EyeSvg from '../svg/EyeSvg/EyeSvg';
@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useNotification } from '@/contexts/NotificationContext/NotificationContext';
 import { useTranslation } from 'react-i18next';
+import { queryClient } from '@/app/providers';
 
 type mode = 'signin' | 'signup';
 
@@ -27,7 +28,6 @@ interface FormValues {
 function AuthForm({ mode }: AuthPagePropsInterface) {
   const { showNotification } = useNotification();
   const { logIn, logUp } = useAuth();
-  const [logInResult, setLogInResult] = useState(false);
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -58,12 +58,15 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
     },
     onSubmit: async (values) => {
       if (mode === 'signin') {
-        const result = await logIn(values.email, values.password).unwrap();
-        if (result) {
-          showNotification(t('signInSuccess'), 5000);
-          router.push('/');
-        } else {
-          setLogInResult(true);
+        try {
+          const result = await logIn(values.email, values.password).unwrap();
+          if (result) {
+            showNotification(t('signInSuccess'), 5000);
+            queryClient.invalidateQueries({ queryKey: ['me'] });
+            router.push('/');
+          }
+        } catch {
+          showNotification(t('invalidCredentials'), 5000);
         }
       } else {
         const result = await logUp(values.email, values.password).unwrap();
@@ -104,7 +107,6 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
 
   const resetForm = () => {
     formik.resetForm();
-    setLogInResult(false);
   };
 
   return (
@@ -120,12 +122,11 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
           svgIconComponent={<MailSvg />}
           title={t('email')}
           dataTestId="email-input"
+          additionalInfo={
+            formik.touched.email && formik.errors.email ? formik.errors.email : undefined
+          }
+          isAdditionInfoError={formik.touched.email && formik.errors.email ? true : false}
         />
-        {formik.touched.email && formik.errors.email && (
-          <div className={styles.authErrorMessage} data-testid="email-error">
-            {formik.errors.email}
-          </div>
-        )}
       </div>
 
       <div className={styles.inputWrapper}>
@@ -139,22 +140,13 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
           svgIconComponent={<EyeSvg />}
           title={t('password')}
           dataTestId="password-input"
+          additionalInfo={
+            formik.touched.password && formik.errors.password ? formik.errors.password : undefined
+          }
+          isAdditionInfoError={formik.touched.password && formik.errors.password ? true : false}
+          isPassword={true}
         />
-        {formik.touched.password && formik.errors.password && (
-          <div className={styles.authErrorMessage} data-testid="password-error">
-            {formik.errors.password}
-          </div>
-        )}
       </div>
-
-      {logInResult ? (
-        <div
-          className={`${styles.authErrorMessage} ${styles.userError}`}
-          data-testid="credentials-error"
-        >
-          {t('invalidCredentials')}
-        </div>
-      ) : null}
 
       <Button className={styles.submitAuthButton} type="submit" data-testid="submit-button">
         {mode == 'signin' ? t('signIn') : t('signUp')}
@@ -165,7 +157,7 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
           <p data-testid="switch-to-signup-text">
             {t('dontHaveAccount')}{' '}
             <Link
-              href="/signup"
+              href="/sign-up"
               className={styles.navLink}
               onClick={resetForm}
               data-testid="switch-to-signup-link"
@@ -188,7 +180,7 @@ function AuthForm({ mode }: AuthPagePropsInterface) {
           <p data-testid="switch-to-signin-text">
             {t('alreadyHaveAccount')}{' '}
             <Link
-              href="/signin"
+              href="/sign-in"
               className={styles.navLink}
               onClick={resetForm}
               data-testid="switch-to-signin-link"

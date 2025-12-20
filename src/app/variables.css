@@ -9,6 +9,8 @@
   --component-text-dark: #ffffff;
   --component-text-gray: #8791b7;
   --logo-text: #ffffff;
+  --component-stroke-primary: #7A44FF;
+  --icon-negative: #FF554A;
 
   transition: all 0.3s ease-in-out;
 }

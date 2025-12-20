@@ -3,7 +3,7 @@ describe('Sign Up page', () => {
   const password = '123456789';
 
   beforeEach(() => {
-    cy.visit('/signup', {
+    cy.visit('/sign-up', {
       onBeforeLoad(win) {
         win.localStorage.setItem('i18nextLng', 'en');
       },
@@ -45,6 +45,6 @@ describe('Sign Up page', () => {
 
   it('switches to sign-in page', () => {
     cy.get('[data-testid="switch-to-signin-link"]').click();
-    cy.url().should('include', '/signin');
+    cy.url().should('include', '/sign-in');
   });
 });

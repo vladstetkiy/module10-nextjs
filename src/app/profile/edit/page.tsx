@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import libApi from '@/utils/libApi';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 
 interface ErrorsInterface {
   email: string;
@@ -24,14 +25,39 @@ interface ErrorsInterface {
   description: string;
 }
 
+const mutationProfileInfo = `
+mutation UpdateProfile($input: UpdateProfileInput!) {
+  updateProfile(input: $input) {
+    id
+    username
+    email
+    description
+  }
+}
+`;
+
+const mutationProfileImage = `
+mutation UpdateProfile($input: UpdateProfileInput!) {
+  updateProfile(input: $input) {
+    profileImage
+  }
+}
+`;
+
 function ProfileInfo() {
+  const profileInfo = localStorage.getItem('personInfo');
+  const formattedProfileInfo =
+    profileInfo !== 'undefined' && profileInfo
+      ? JSON.parse(profileInfo)
+      : { username: '', description: '', email: '' };
   const themeToggle = useThemeStore((state) => state.themeToggle);
   const { logOut } = useAuth();
   const { i18n, t } = useTranslation();
   const { showNotification } = useNotification();
-  const [newUsername, setNewUsername] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newDescription, setNewDescription] = useState('');
+  const [newUsername, setNewUsername] = useState(formattedProfileInfo.username);
+  const [newEmail, setNewEmail] = useState(formattedProfileInfo.email);
+  const [newDescription, setNewDescription] = useState(formattedProfileInfo.description);
+  const [isDescriptionInfoVisible, setIsDescriptionInfoVisible] = useState(false);
   const queryClient = useQueryClient();
   const [errors, setErrors] = useState<ErrorsInterface>({
     email: '',
@@ -39,30 +65,50 @@ function ProfileInfo() {
     description: '',
   });
 
-  const mutation = `
-    mutation UpdateProfile($input: UpdateProfileInput!) {
-      updateProfile(input: $input) {
-        id
-        username
-        email
-        description
-      }
-    }
-  `;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateProfileMutation = useMutation({
     mutationFn: (profileData: { email: string; description: string; username: string }) =>
       libApi.post('/graphql', {
-        query: mutation,
+        query: mutationProfileInfo,
         operationName: 'UpdateProfile',
         variables: {
           input: profileData,
         },
       }),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      showNotification(t('updatedProfile'), 5000);
+      localStorage.setItem('personInfo', {
+        ...formattedProfileInfo,
+        ...data.updateProfile,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['me'],
+      });
+    },
+    onError: (error) => {
+      console.error('Error updating profile:', error);
+      showNotification(t('updateProfileError'), 5000);
+    },
+  });
+
+  const updateProfileImageMutation = useMutation({
+    mutationFn: (profileData: { profileImage: string }) =>
+      libApi.post('/graphql', {
+        query: mutationProfileImage,
+        operationName: 'UpdateProfile',
+        variables: {
+          input: profileData,
+        },
+      }),
+    onSuccess: (data) => {
+      console.log(data);
       showNotification(t('updatedProfile'), 5000);
       queryClient.invalidateQueries({
         queryKey: ['me'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [formattedProfileInfo.id],
       });
     },
     onError: (error) => {
@@ -88,19 +134,6 @@ function ProfileInfo() {
     validateForm();
     setNewDescription(event.target.value);
   };
-
-  //this function commented to show how notifications working together
-
-  // const clearForm = () => {
-  //   setNewUsername('');
-  //   setNewEmail('');
-  //   setNewDescription('');
-  //   setErrors({
-  //     email: '',
-  //     username: '',
-  //     description: '',
-  //   });
-  // };
 
   const validateForm = () => {
     const newErrors = {
@@ -149,17 +182,47 @@ function ProfileInfo() {
         username: newUsername,
       });
     }
+  };
 
-    //this function commented to show how notifications working together
+  const handleDescriptionInputBlur = () => {
+    setIsDescriptionInfoVisible(false);
+  };
 
-    //clearForm();
+  const handleDescriptionInputFocus = () => {
+    setIsDescriptionInfoVisible(true);
+  };
+
+  const handleProfileImageClick = () => {
+    fileInputRef.current?.click();
+  };
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      updateProfileImageMutation.mutateAsync({
+        profileImage: URL.createObjectURL(file),
+      });
+    }
   };
 
   return (
     <main className={styles.profileInfo}>
       <form className={styles.editProfile} onSubmit={handleSubmit}>
-        <h2>{t('editProfile')}</h2>
-        <PersonShortInfo avatarClassName={styles.profileAvatar} isMe={true} />
+        <h2 className={styles.h2}>{t('editProfile')}</h2>
+        <input
+          ref={fileInputRef}
+          type="file"
+          onChange={handleProfileImageChange}
+          accept=".jpg,.jpeg,.png,.pdf"
+          style={{ display: 'none' }}
+        />
+        <PersonShortInfo
+          avatarClassName={styles.profileAvatar}
+          isMe={true}
+          descriptionText={t('changeProfilePhoto')}
+          onClick={handleProfileImageClick}
+        />
+
         <Input
           inputClassName={styles.usernameInput}
           placeholder="@username123"
@@ -167,8 +230,10 @@ function ProfileInfo() {
           onChange={handleUsernameInputChange}
           svgIconComponent={<UserSvg />}
           title={t('username')}
+          additionalInfo={errors.username ? errors.username : undefined}
+          isAdditionInfoError={errors.username ? true : false}
         />
-        {errors.username ? <p className={styles.errorMessage}>{errors.username}</p> : null}
+
         <Input
           inputClassName={styles.emailInput}
           placeholder="email@domain.com"
@@ -176,8 +241,9 @@ function ProfileInfo() {
           onChange={handleEmailInputChange}
           svgIconComponent={<MailSvg />}
           title={t('email')}
+          additionalInfo={errors.email ? errors.email : undefined}
+          isAdditionInfoError={errors.email ? true : false}
         />
-        {errors.email ? <p className={styles.errorMessage}>{errors.email}</p> : null}
         <Input
           inputClassName={styles.descriptionInput}
           placeholder={t('descriptionPlaceholder')}
@@ -185,9 +251,17 @@ function ProfileInfo() {
           onChange={handleDescriptionInputChange}
           svgIconComponent={<PenSvg />}
           title={t('description')}
-          additionalInfo={t('maxDescLength')}
+          additionalInfo={
+            isDescriptionInfoVisible
+              ? errors.description
+                ? t('lengthLimitSurpassed')
+                : t('maxDescLength')
+              : undefined
+          }
+          isAdditionInfoError={errors.description ? true : false}
+          onBlur={handleDescriptionInputBlur}
+          onFocus={handleDescriptionInputFocus}
         />
-        {errors.description ? <p className={styles.errorMessage}>{errors.description}</p> : null}
         <Button
           className={styles.saveChangesButton}
           type="submit"
@@ -198,7 +272,7 @@ function ProfileInfo() {
       </form>
       <div className={styles.secondColumnWrapper}>
         <section className={styles.Preferences}>
-          <h2 className=".h2">{t('preferencies')}</h2>
+          <h2 className={styles.h2}>{t('preferencies')}</h2>
           <Toggle
             visualMode="toggle"
             onToggle={themeToggle}
@@ -209,11 +283,11 @@ function ProfileInfo() {
             visualMode="toggle"
             onToggle={toggleLanguage}
             isOn={i18n.language !== 'en'}
-            secondOption={i18n.language === 'en' ? 'RU' : 'EN'}
+            secondOption={'RU'}
           />
         </section>
         <section className={styles.Actions}>
-          <h2>{t('actions')}</h2>
+          <h2 className={styles.h2}>{t('actions')}</h2>
           <Link href="/" className={styles.logoutLinkButton}>
             <Button onClick={logOut} className={styles.logoutButton}>
               <p>{t('logout')}</p>

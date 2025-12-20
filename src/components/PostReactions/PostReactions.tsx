@@ -8,25 +8,39 @@ import LikeSvg from '../svg/LikeSvg/LikeSvg';
 import RowSvg from '../svg/RowSvg/RowSvg';
 import PenSvg from '../svg/PenSvg/PenSvg';
 import Input from '../Input/Input';
-import { type CommentInterface, validateComment } from '../../types/post.types';
+import { type CommentInterface, UserInterface, validateComment } from '../../types/post.types';
 import libApi from '@/utils/libApi';
 import { useTranslation } from 'react-i18next';
 import { getPostComments } from '@/utils/libApi';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/useAuth';
+import { useNotification } from '@/contexts/NotificationContext/NotificationContext';
+import TrashSvg from '../svg/TrashSvg/TrashSvg';
 
 interface PostReactionsPropsInterface {
   postId: number;
   likes: number;
+  likedByUsers: UserInterface[];
 }
 
-function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
+function PostReactions({ postId, likes, likedByUsers }: PostReactionsPropsInterface) {
   const { t } = useTranslation();
-
+  const { isAuth, personInfo } = useAuth();
   const [newComment, setNewComment] = useState('');
   const [isCommentsVisible, setIsCommentsVisible] = useState(true);
   const [likesCount, setLikesCount] = useState(likes);
+  const [isLikedByUser, setIsLikedByUser] = useState(() => {
+    if (!isAuth) {
+      return false;
+    }
+    if (!likedByUsers.find((item) => item.id === personInfo.id)) {
+      return false;
+    }
+    return true;
+  });
+
   const queryClient = useQueryClient();
-  const isAuth = localStorage.getItem('isAuth');
+  const { showNotification } = useNotification();
 
   const { data: comments } = useQuery({
     queryKey: ['post-comments', postId],
@@ -48,29 +62,57 @@ function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
     },
   });
 
+  const { mutate: deleteComment } = useMutation({
+    mutationFn: (commentId: number) => libApi.delete(`/comments/${commentId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['post-comments', postId],
+      });
+    },
+    onError: (error) => {
+      console.error('Failed to delete comment', error);
+    },
+  });
+
   const handleAddComment = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (!newComment.trim()) {
       return;
     }
     const newCommentObj: CommentInterface = {
-      id: 1984,
+      id: Math.floor(Math.random() * 100),
       text: newComment,
-      authorId: 1,
+      authorId: personInfo.id,
       postId: postId,
       creationDate: new Date().toISOString(),
       modifiedDate: new Date().toISOString(),
     };
 
     addComment(newCommentObj);
+    showNotification(t('createComment'));
+    setNewComment('');
+  };
+
+  const handleDeleteComment = (event: React.MouseEvent<HTMLButtonElement>, commentId: number) => {
+    event.preventDefault();
+    deleteComment(commentId);
+    showNotification(t('deleteComment'));
   };
 
   const handleLike = () => {
-    setLikesCount((prev) => prev + 1);
-    libApi.post('/like', {
-      postId: postId,
-    });
-    setNewComment('');
+    if (isLikedByUser) {
+      setLikesCount((prev) => prev - 1);
+      setIsLikedByUser(false);
+    } else if (isAuth) {
+      libApi.post('/like', {
+        postId: postId,
+      });
+      setLikesCount((prev) => prev + 1);
+      setNewComment('');
+      setIsLikedByUser(true);
+    } else {
+      showNotification(t('loginToLike'), 5000);
+    }
   };
 
   const handleICommentInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -85,7 +127,7 @@ function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
       <div className={styles.reactionsCount}>
         <div className={styles.likes}>
           <Button onClick={handleLike} isStyleDisabled={true}>
-            <LikeSvg />
+            <LikeSvg isActive={isLikedByUser} />
           </Button>
 
           <p>
@@ -116,31 +158,44 @@ function PostReactions({ postId, likes }: PostReactionsPropsInterface) {
           )}
         </div>
       </div>
-      {isCommentsVisible && isAuth ? (
-        <>
-          <div className={styles.comments}>
-            {comments ? (
-              comments.map((comment, index) => (
-                <p key={index}>{`#${index + 1}. ` + comment.text}</p>
-              ))
-            ) : (
-              <p>{t('loadingComments')}</p>
-            )}
-          </div>
-          <Input
-            wrapperClassName={styles.commentInputWrapper}
-            inputClassName={styles.commentInput}
-            placeholder={t('commentPlaceholder')}
-            value={newComment}
-            onChange={handleICommentInputChange}
-            svgIconComponent={<PenSvg />}
-            title={t('addComment')}
-          />
-          <Button onClick={handleAddComment} className={styles.addCommentButton}>
-            {t('addComment')}
-          </Button>
-        </>
-      ) : null}
+
+      <div
+        className={`${styles.commentsSection} ${isCommentsVisible && isAuth ? styles.commentsSectionVisible : ''}`}
+      >
+        <div className={styles.comments}>
+          {comments ? (
+            comments.map((comment, index) => (
+              <div key={index} className={styles.commentWrapper}>
+                <p>{`#${index + 1}. ` + comment.text}</p>
+                {personInfo.id === comment.authorId ? (
+                  <Button
+                    isStyleDisabled={true}
+                    onClick={(event) => {
+                      handleDeleteComment(event, comment.id);
+                    }}
+                  >
+                    <TrashSvg />
+                  </Button>
+                ) : null}
+              </div>
+            ))
+          ) : (
+            <p>{t('loadingComments')}</p>
+          )}
+        </div>
+        <Input
+          wrapperClassName={styles.commentInputWrapper}
+          inputClassName={styles.commentInput}
+          placeholder={t('commentPlaceholder')}
+          value={newComment}
+          onChange={handleICommentInputChange}
+          svgIconComponent={<PenSvg />}
+          title={t('addComment')}
+        />
+        <Button onClick={handleAddComment} className={styles.addCommentButton}>
+          {t('addComment')}
+        </Button>
+      </div>
     </>
   );
 }
