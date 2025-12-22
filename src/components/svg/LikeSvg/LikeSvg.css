@@ -1,3 +1,9 @@
 .like-svg {
   stroke: var(--component-text-dark);
+  fill: none;
+}
+
+.like-svg.liked {
+  fill: var(--component-text-dark);
+  stroke: var(--component-text-dark);
 }

@@ -15,7 +15,7 @@ const resources = {
       password: 'Password',
       passwordPlaceholder: 'Enter password',
       signUp: 'Sign Up',
-      signIn: 'Sign In',
+      signIn: 'Sign In into an account',
       termsAgreement: 'By clicking continue, you agree to our',
       termsOfService: 'Terms of Service',
       and: 'and',
@@ -69,6 +69,7 @@ const resources = {
       commentsPlural2: 'comments',
       loadingComments: 'Loading comments...',
       loginToSeeComments: 'You have to log in to see the comments',
+      loginToLike: 'You have log in to like post',
       addComment: 'Add a comment',
       addingComment: 'Adding...',
       commentPlaceholder: 'Write description here...',
@@ -122,6 +123,7 @@ const resources = {
   },
   ru: {
     translation: {
+      loginToLike: 'Необходимо войти что бы лайкать посты',
       createAccount: 'Создать аккаунт',
       signInAccount: 'Войти в аккаунт',
       enterEmailPassword: 'Введите вашу почту и пароль',

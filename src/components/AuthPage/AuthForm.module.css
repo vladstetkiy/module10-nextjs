@@ -18,6 +18,14 @@
   gap: 24px;
 }
 
+.infoSvg {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
+  fill: var(--icon-negative);
+}
+
 .h2 {
   font-size: 17px;
   margin-bottom: 2px;
@@ -37,7 +45,7 @@
 }
 
 .authErrorMessage {
-  color: red;
+  color: var(--icon-negative);
 }
 
 .userError {

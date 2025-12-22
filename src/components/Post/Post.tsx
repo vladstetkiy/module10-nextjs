@@ -4,7 +4,7 @@ import PostReactions from '../PostReactions/PostReactions';
 import type { PostInterface } from '../../types/post.types.ts';
 import { IS_STATIC_EXPORT } from '@/utils/config';
 
-function Post({ id, content, image, authorId, likesCount }: PostInterface) {
+function Post({ id, content, image, authorId, likesCount, likedByUsers = [] }: PostInterface) {
   return (
     <section key={id} className={styles.post}>
       <PersonShortInfo itemId={authorId} avatarClassName={styles.postAvatar} />
@@ -18,7 +18,7 @@ function Post({ id, content, image, authorId, likesCount }: PostInterface) {
       <div className={styles.postDescription}>
         <p>{content}</p>
       </div>
-      <PostReactions postId={id} likes={likesCount} />
+      <PostReactions postId={id} likes={likesCount} likedByUsers={likedByUsers} />
     </section>
   );
 }

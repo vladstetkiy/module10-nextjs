@@ -9,13 +9,21 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import Button from '../Button/Button';
+import { getMe } from '@/utils/libApi';
+import { useQuery } from '@tanstack/react-query';
 
 function Header() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const allowedPathsForNav = ['/', '/profile/edit', '/profile/statistic'];
-  const { personInfo, isAuth } = useAuth();
+  const { isAuth } = useAuth();
+
+  const { data: meData } = useQuery({
+    queryKey: ['me'],
+    queryFn: getMe,
+    enabled: isAuth,
+  });
 
   useEffect(() => {
     function handleMobileClick(event: MouseEvent) {
@@ -44,7 +52,7 @@ function Header() {
             <LogoSvg className={isDrawerOpen ? styles.headerLogoDrawer : styles.headerLogo} />
           </Link>
           {isDrawerOpen && isAuth ? (
-            <Avatar avatarSrc={personInfo.profileImage} className={styles.headerAvatar} />
+            <Avatar avatarSrc={meData?.profileImage} className={styles.headerAvatar} />
           ) : null}
         </div>
 
@@ -55,8 +63,8 @@ function Header() {
                 <>
                   {!isDrawerOpen ? (
                     <Link href="/profile/edit" className={styles.profileInfoLink}>
-                      <Avatar avatarSrc={personInfo.profileImage} className={styles.headerAvatar} />
-                      <p>{personInfo.firstName + ' ' + personInfo.secondName}</p>
+                      <Avatar avatarSrc={meData?.profileImage} className={styles.headerAvatar} />
+                      <p>{meData?.firstName + ' ' + meData?.secondName}</p>
                     </Link>
                   ) : (
                     <>
@@ -84,14 +92,14 @@ function Header() {
               ) : (
                 <>
                   <Link
-                    href="/signin"
+                    href="/sign-in"
                     className={!isDrawerOpen ? styles.navLinkHeader : styles.navLinkDrawer}
                     onClick={() => setIsDrawerOpen(false)}
                   >
                     {t('signInLink')}
                   </Link>
                   <Link
-                    href="/signup"
+                    href="/sign-up"
                     className={!isDrawerOpen ? styles.navLinkHeader : styles.navLinkDrawer}
                     onClick={() => setIsDrawerOpen(false)}
                   >

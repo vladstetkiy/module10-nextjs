@@ -12,6 +12,7 @@
   max-width: 372px;
   min-width: 270px;
   width: 100%;
+  margin-left: -55px;
 }
 
 .listContainerSkeleton .listContainerTitle {

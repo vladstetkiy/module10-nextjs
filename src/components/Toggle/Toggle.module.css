@@ -15,30 +15,9 @@
     height: 28px;
     display: flex;
     align-items: center;
-    background-color: var(--component-fill-dark-soft);
     border-radius: 9999px;
     transition: all 0.3s ease;
     padding: 2px;
-  }
-
-  .toggleOff {
-    .toggleHandle {
-      background-color: var(--component-fill-light-fixed);
-    }
-  }
-
-  .toggleOn {
-    .toggleHandle {
-      background-color: var(--component-fill-positive);
-    }
-  }
-
-  .toggleHandle {
-    width: 20px;
-    height: 20px;
-    background-color: var(--component-fill-light-fixed);
-    border-radius: 50%;
-    transition: all 0.3s ease;
   }
 
   .toggleOn .toggleHandle {

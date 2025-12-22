@@ -8,13 +8,17 @@ export interface AvatarPropsInterface {
 }
 
 function Avatar({ avatarSrc = '', className }: AvatarPropsInterface) {
+  if (!avatarSrc || avatarSrc.trim() === '') {
+    return null;
+  }
+
   return (
     <Image
-      src={(IS_STATIC_EXPORT ? '/module10-nextjs/' : '') + avatarSrc}
+      src={(IS_STATIC_EXPORT ? '/module10-nextjs' : '') + avatarSrc}
       width={50}
       height={50}
-      alt="a"
-      className={className + ' ' + styles.avatar}
+      alt="User avatar"
+      className={`${className} ${styles.avatar}`}
     />
   );
 }

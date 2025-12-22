@@ -13,8 +13,8 @@ export default function HomePage() {
     <div className={styles.homePage}>
       <main className={styles.main}>
         {isAuth && <CreatePostSkeleton />}
-        {[0, 0, 0].map(() => (
-          <PostSkeleton />
+        {Array.from({ length: 3 }).map((_, index) => (
+          <PostSkeleton key={index} />
         ))}
       </main>
       {isAuth && (

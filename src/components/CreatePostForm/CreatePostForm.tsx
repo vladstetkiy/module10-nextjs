@@ -36,14 +36,13 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
   const queryClient = useQueryClient();
 
   const createPostMutation = useMutation({
-    mutationFn: async (postData: { title: string; content: string; image: File | null }) => {
+    mutationFn: async (postData: { title: string; content: string; image: string | null }) => {
       if (postData.image) {
-        const formData = new FormData();
-        formData.append('title', postData.title);
-        formData.append('content', postData.content);
-        formData.append('image', postData.image);
-
-        return libApi.post('/posts', formData);
+        return libApi.post('/posts', {
+          title: postData.title,
+          content: postData.content,
+          image: postData.image,
+        });
       } else {
         return libApi.post('/posts', {
           title: postData.title,
@@ -146,6 +145,7 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     if (files.length > 0) {
       const file = files[0];
       setSelectedFile(file);
+      console.log(selectedFile);
       validateForm();
     }
   };
@@ -163,19 +163,17 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
     event.preventDefault();
 
     const validateResult = validateForm();
-
     if (validateResult) {
       await createPostMutation.mutateAsync({
         title: newTitle,
         content: newDescription,
-        image: null,
+        image: selectedFile ? URL.createObjectURL(selectedFile) : null,
       });
       showNotification(t('postCreated'), 5000);
       clearForm();
       closeFunc();
     }
   };
-
   return (
     <>
       <section className={styles.createPostContainer}>
@@ -193,8 +191,9 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
             onChange={handleTitleInputChange}
             svgIconComponent={<MailSvg />}
             title={t('postTitle')}
+            additionalInfo={errors.title}
+            isAdditionInfoError={!!errors.title}
           />
-          {errors.title ? <p className={styles.createPostErrorMessage}>{errors.title}</p> : null}
 
           <Input
             inputClassName={styles.descriptionInputForm}
@@ -203,10 +202,9 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
             onChange={handleDescriptionInputChange}
             svgIconComponent={<PenSvg />}
             title={t('description')}
+            additionalInfo={errors.description}
+            isAdditionInfoError={!!errors.description}
           />
-          {errors.description ? (
-            <p className={styles.createPostErrorMessage}>{errors.description}</p>
-          ) : null}
 
           <div
             className={styles.dragAndDropCreatePostInput}
@@ -214,11 +212,18 @@ function CreatePostForm({ closeFunc }: CreatePostFormInterface) {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           >
-            <UploadFileSvg className={styles.uploadFileCreatePostSvg} />
-            <div className={styles.infoWrapper}>
-              <p>{t('uploadFile')}</p>
-              <p className={styles.additionalInfo}>{t('fileTypes')}</p>
-            </div>
+            {!selectedFile ? (
+              <>
+                {' '}
+                <UploadFileSvg className={styles.uploadFileCreatePostSvg} />
+                <div className={styles.infoWrapper}>
+                  <p>{t('uploadFile')}</p>
+                  <p className={styles.additionalInfo}>{t('fileTypes')}</p>
+                </div>
+              </>
+            ) : (
+              <img src={URL.createObjectURL(selectedFile)} className={styles.filePreview} />
+            )}
 
             <input
               ref={fileInputRef}

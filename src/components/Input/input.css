@@ -17,9 +17,18 @@
 
 .input-base {
   background-color: var(--component-fill-light);
-  border: var(--component-stroke-dark-soft) solid;
+  border: 1px var(--component-stroke-dark-soft) solid;
   color: var(--component-text-dark);
   padding: 16px;
+}
+
+.input-base::placeholder {
+  color: var(--component-text-gray);
+}
+
+.base-error {
+  border: 1px var(--icon-negative) solid;
+  color: var(--icon-negative);
 }
 
 .additional-info-wrapper {
@@ -27,12 +36,48 @@
   gap: 8px;
 }
 
-.additional-info-svg {
-  width: 20px;
-  height: 20px;
+.input-base:focus {
+  border-color: var(--component-stroke-primary);
+  outline: none;
+}
+
+.base-error:focus {
+  border: 1px var(--icon-negative) solid;
+}
+
+.info-svg {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
   fill: var(--component-text-gray);
 }
 
+.info-svg-error {
+  fill: var(--icon-negative);
+}
+
 .additional-info-text {
-  color: var(--component-text-gray);
+  color: var(--component-text-gray)
+}
+
+.text-error {
+  color: var(--icon-negative)
+}
+
+.input-container {
+  position: relative;
+}
+
+.eye-svg {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  transform: translateY(-50%)
+}
+
+.eye-svg:hover {
+  transition: transform 0.3s ease;
+  transform: translateY(-50%) scale(1.15);
 }

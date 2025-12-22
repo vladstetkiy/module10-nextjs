@@ -18,7 +18,7 @@ interface TogglePropsInterface {
   dataTestId?: string;
 }
 
-const MaterialSwitch = styled(Switch)(({ theme }) => ({
+const MaterialSwitch = styled(Switch)(() => ({
   width: 48,
   height: 28,
   padding: 0,
@@ -32,30 +32,22 @@ const MaterialSwitch = styled(Switch)(({ theme }) => ({
         backgroundColor: 'var(--component-fill-dark-soft)',
         opacity: 1,
       },
-      '& .MuiSwitch-thumb': {
-        backgroundColor: 'var(--component-fill-positive)',
-      },
     },
     '&.Mui-disabled': {
-      '& + .MuiSwitch-track': {
-        opacity: 0.5,
-      },
+      '& + .MuiSwitch-track': {},
     },
   },
   '& .MuiSwitch-thumb': {
     width: 20,
     height: 20,
-    backgroundColor: 'var(--component-fill-light-fixed)',
     boxShadow: 'none',
     transition: 'all 0.3s ease',
+    backgroundColor: 'var(--component-fill-positive)',
   },
   '& .MuiSwitch-track': {
     borderRadius: 9999,
     backgroundColor: 'var(--component-fill-dark-soft)',
     opacity: 1,
-    transition: theme.transitions.create(['background-color'], {
-      duration: 300,
-    }),
   },
 }));
 

@@ -1,7 +1,7 @@
 .reactionsCount {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 
   button {
     display: flex;
@@ -16,6 +16,24 @@
   gap: 10px;
 }
 
+.likeSvgActive {
+  fill: var(--component-text-dark);
+}
+
+.commentsSection {
+  max-height: 0;
+  opacity: 0;
+  gap: 16px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.commentsSectionVisible {
+  max-height: 2000px;
+  gap: 16px;
+  opacity: 1;
+}
+
 .comments {
   display: flex;
   flex-direction: column;
@@ -28,14 +46,22 @@
 }
 
 .commentInputWrapper {
+  margin-top: 16px;
   width: 100%;
 }
 
 .commentSvgInvisible {
   transform: rotate(90deg);
+  transition: transform 0.3s ease;
+}
+
+.commentWrapper {
+  display: flex;
+  justify-content: space-between;
 }
 
 .addCommentButton {
+  margin-top: 16px;
   width: 211px;
 }
 
@@ -59,5 +85,9 @@
 
   .addComment input {
     height: 58px;
+  }
+
+  .commentsSectionVisible {
+    max-height: 400px;
   }
 }
